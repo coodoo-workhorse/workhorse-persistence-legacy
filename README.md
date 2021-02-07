@@ -1,10 +1,10 @@
-[logo]: https://gitlab.coodoo.io/workhorse/workhorse-persistence-mysql-legacy/-/raw/master/logo.png "Workhorse: Extendable Java Job Engine for background jobs and business critical tasks"
-
-# Workhorse Persistence MySQL Legacy ![alt text][logo]
+# Workhorse Persistence MySQL Legacy
 
 > Legacy support for the MySQL Persistence of Workhorse version 1.5
 
 ## Table of Contents
+<img align="right" height="200px" src="logo.png">
+
 - [Prerequisites](#prerequisites)
 - [Install](#install)
 - [Getting started](#getting-started)
