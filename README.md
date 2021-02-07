@@ -1,4 +1,4 @@
-[logo]: https://gitlab.coodoo.io/workhorse/workhorse-ui-api-legacy/-/raw/master/logo.png "Workhorse: Extendable Java Job Engine for background jobs and business critical tasks"
+[logo]: https://gitlab.coodoo.io/workhorse/workhorse-persistence-mysql-legacy/-/raw/master/logo.png "Workhorse: Extendable Java Job Engine for background jobs and business critical tasks"
 
 # Workhorse Persistence MySQL Legacy ![alt text][logo]
 
