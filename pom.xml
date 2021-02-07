@@ -1,0 +1,94 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>io.coodoo</groupId>
+	<artifactId>workhorse-persistence-mysql-legacy</artifactId>
+	<version>2.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<name>Workhorse Persistence MySQL Legacy</name>
+	<description>Legacy support for the MySQL Persistence of Workhorse version 1.5</description>
+	<url>http://workhorse.coodoo.io/</url>
+	<inceptionYear>2021</inceptionYear>
+	<organization>
+		<name>coodoo GmbH</name>
+		<url>https://coodoo.io</url>
+	</organization>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<failOnMissingWebXml>false</failOnMissingWebXml>
+	</properties>
+	<developers>
+		<developer>
+			<name>Yvaris Yemeli Djouda</name>
+			<email>yvaris.djouda@coodoo.de</email>
+			<organization>coodoo GmbH</organization>
+			<organizationUrl>https://coodoo.io</organizationUrl>
+		</developer>
+		<developer>
+			<name>Arend Kühle</name>
+			<email>arend.kuehle@coodoo.de</email>
+			<organization>coodoo GmbH</organization>
+			<organizationUrl>https://coodoo.io</organizationUrl>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<dependencies>
+		<dependency>
+			<groupId>io.coodoo</groupId>
+			<artifactId>workhorse</artifactId>
+			<version>2.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.logging</groupId>
+			<artifactId>jboss-logging</artifactId>
+			<version>3.4.1.Final</version>
+		</dependency>	
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<version>2.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.coodoo</groupId>
+			<artifactId>coodoo-listing</artifactId>
+			<version>1.6.0</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<finalName>workhorse-persistence-mysql-legacy</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.1</version>
+				<configuration>
+					<excludes>
+						<exclude>**/rebel.xml</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
