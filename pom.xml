@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.coodoo</groupId>
 	<artifactId>workhorse-persistence-mysql-legacy</artifactId>
-	<version>2.0.0-SNAPSHOT</version>
+	<version>2.0.0-RC1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Workhorse Persistence MySQL Legacy</name>
 	<description>Legacy support for the MySQL Persistence of Workhorse version 1.5</description>
@@ -44,7 +44,7 @@
 		<dependency>
 			<groupId>io.coodoo</groupId>
 			<artifactId>workhorse</artifactId>
-			<version>2.0.0-SNAPSHOT</version>
+			<version>2.0.0-RC1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.logging</groupId>

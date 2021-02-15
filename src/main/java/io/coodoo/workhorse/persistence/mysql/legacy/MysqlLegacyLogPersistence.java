@@ -6,7 +6,6 @@ import javax.enterprise.context.ApplicationScoped;
 
 import io.coodoo.workhorse.core.entity.WorkhorseLog;
 import io.coodoo.workhorse.persistence.interfaces.LogPersistence;
-import io.coodoo.workhorse.persistence.interfaces.PersistenceTyp;
 
 /**
  * Legacy support for the MySQL Persistence of Workhorse version 1.5
@@ -53,7 +52,7 @@ public class MysqlLegacyLogPersistence implements LogPersistence {
     }
 
     @Override
-    public PersistenceTyp getPersistenceTyp() {
+    public String getPersistenceName() {
         // TODO Auto-generated method stub
         return null;
     }
