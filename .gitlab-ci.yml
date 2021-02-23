@@ -48,13 +48,23 @@ build:
   tags:
     - Java
   script:
+    - mvn $MAVEN_CLI_OPTS dependency:get -Dartifact=io.coodoo:workhorse:2.0.0-RC1-SNAPSHOT -s ci_settings.xml
     - mvn $MAVEN_CLI_OPTS clean compile
+name: "workhorse-persistence-mysql-legacy-$CI_BUILD_ID-$CI_BUILD_REF"
+    paths:
+      - target/*.jar
+      - target/lib/*
+      - target/*-runner.jar
+
+    expire_in: 1 hour
+
 
 test:
   stage: test
   tags:
     - Java
   script:
+    - mvn $MAVEN_CLI_OPTS dependency:get -Dartifact=io.coodoo:workhorse:2.0.0-RC1-SNAPSHOT -s ci_settings.xml
     - mvn $MAVEN_CLI_OPTS test
   artifacts:
     reports:
@@ -66,6 +76,8 @@ deploy:
   tags:
     - Java
   script:
+    - mvn $MAVEN_CLI_OPTS dependency:get -Dartifact=io.coodoo:workhorse:2.0.0-RC1-SNAPSHOT -s ci_settings.xml
     - mvn $MAVEN_CLI_OPTS deploy -s ci_settings.xml
   only:
     - master
+
