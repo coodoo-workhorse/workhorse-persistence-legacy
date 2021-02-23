@@ -7,6 +7,7 @@ import javax.enterprise.context.ApplicationScoped;
 import io.coodoo.workhorse.core.entity.Job;
 import io.coodoo.workhorse.core.entity.JobStatus;
 import io.coodoo.workhorse.persistence.interfaces.JobPersistence;
+import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyConfig;
 
 /**
  * Legacy support for the MySQL Persistence of Workhorse version 1.5
@@ -84,8 +85,7 @@ public class MysqlLegacyJobPersistence implements JobPersistence {
 
     @Override
     public String getPersistenceName() {
-        // TODO Auto-generated method stub
-        return null;
+        return MySQLLegacyConfig.NAME;
     }
 
 }

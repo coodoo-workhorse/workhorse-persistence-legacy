@@ -7,6 +7,7 @@ import javax.enterprise.context.ApplicationScoped;
 
 import io.coodoo.workhorse.core.entity.Execution;
 import io.coodoo.workhorse.persistence.interfaces.ExecutionPersistence;
+import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyConfig;
 
 /**
  * Legacy support for the MySQL Persistence of Workhorse version 1.5
@@ -132,8 +133,7 @@ public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
 
     @Override
     public String getPersistenceName() {
-        // TODO Auto-generated method stub
-        return null;
+        return MySQLLegacyConfig.NAME;
     }
 
     @Override
