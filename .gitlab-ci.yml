@@ -55,9 +55,7 @@ name: "workhorse-persistence-mysql-legacy-$CI_BUILD_ID-$CI_BUILD_REF"
       - target/*.jar
       - target/lib/*
       - target/*-runner.jar
-
     expire_in: 1 hour
-
 
 test:
   stage: test
