@@ -20,14 +20,14 @@ import io.coodoo.framework.listing.boundary.Listing;
 import io.coodoo.framework.listing.boundary.ListingParameters;
 import io.coodoo.framework.listing.boundary.ListingResult;
 import io.coodoo.workhorse.core.control.StaticConfig;
+import io.coodoo.workhorse.core.entity.ExecutionStatus;
+import io.coodoo.workhorse.core.entity.JobStatus;
 import io.coodoo.workhorse.persistence.mysql.legacy.boundary.annotation.JobEngineEntityManager;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.Config;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.GroupInfo;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.Job;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.JobExecution;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.JobExecutionInfo;
-import io.coodoo.workhorse.persistence.mysql.legacy.entity.JobExecutionStatus;
-import io.coodoo.workhorse.persistence.mysql.legacy.entity.JobStatus;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.Log;
 import io.coodoo.workhorse.util.CronExpression;
 import io.coodoo.workhorse.util.WorkhorseUtil;
@@ -58,6 +58,27 @@ public class MySQLLegacyService {
             logger.info("Created: {}", config);
             logMessage("Initial config set: " + config, null, false);
         }
+        return config;
+    }
+
+    public Config updateConfig(String timeZone, int jobQueuePollerInterval, int jobQueueMax, int jobQueueMin, int zombieRecognitionTime,
+                    ExecutionStatus zombieCureStatus, int daysUntilStatisticMinutesDeletion, int daysUntilStatisticHoursDeletion, String logChange,
+                    String logTimeFormatter, String logInfoMarker, String logWarnMarker, String logErrorMarker) {
+
+        Config config = getConfig();
+        config.setTimeZone(timeZone);
+        config.setJobQueuePollerInterval(jobQueuePollerInterval);
+        config.setJobQueueMax(jobQueueMax);
+        config.setJobQueueMin(jobQueueMin);
+        config.setZombieRecognitionTime(zombieRecognitionTime);
+        config.setZombieCureStatus(zombieCureStatus);
+        config.setDaysUntilStatisticMinutesDeletion(daysUntilStatisticMinutesDeletion);
+        config.setDaysUntilStatisticHoursDeletion(daysUntilStatisticHoursDeletion);
+        config.setLogChange(logChange);
+        config.setLogTimeFormatter(logTimeFormatter);
+        config.setLogInfoMarker(logInfoMarker);
+        config.setLogWarnMarker(logWarnMarker);
+        config.setLogErrorMarker(logErrorMarker);
         return config;
     }
 
@@ -273,9 +294,9 @@ public class MySQLLegacyService {
      * @return <code>true</code> if no execution of this batch job is either queued or running.
      */
     public boolean isBatchFinished(Long batchId) {
-        Long queuedExecutions = countBatchExecutions(batchId, JobExecutionStatus.QUEUED);
+        Long queuedExecutions = countBatchExecutions(batchId, ExecutionStatus.QUEUED);
         if (queuedExecutions.equals(0l)) {
-            Long runningExecutions = countBatchExecutions(batchId, JobExecutionStatus.RUNNING);
+            Long runningExecutions = countBatchExecutions(batchId, ExecutionStatus.RUNNING);
             if (runningExecutions.equals(0l)) {
                 return true;
             }
@@ -283,7 +304,7 @@ public class MySQLLegacyService {
         return false;
     }
 
-    public Long countBatchExecutions(Long batchId, JobExecutionStatus status) {
+    public Long countBatchExecutions(Long batchId, ExecutionStatus status) {
         return JobExecution.countBatchByStatus(entityManager, batchId, status);
     }
 
@@ -292,10 +313,10 @@ public class MySQLLegacyService {
     }
 
     /**
-     * Abort all executions of a batch that are in status {@link JobExecutionStatus#QUEUED}
+     * Abort all executions of a batch that are in status {@link ExecutionStatus#QUEUED}
      * 
      * @param batchId the ID of the batch executions
-     * @return the amount of executions of that batch that where put in status {@link JobExecutionStatus#ABORTED}
+     * @return the amount of executions of that batch that where put in status {@link ExecutionStatus#ABORTED}
      */
     public int abortBatch(Long batchId) {
         return JobExecution.abortBatch(entityManager, batchId);
@@ -312,20 +333,20 @@ public class MySQLLegacyService {
     }
 
     /**
-     * Abort all executions of a chain that are in status {@link JobExecutionStatus#QUEUED}
+     * Abort all executions of a chain that are in status {@link ExecutionStatus#QUEUED}
      * 
      * @param chainId the ID of the chain executions
-     * @return the amount of executions of that chain that where put in status {@link JobExecutionStatus#ABORTED}
+     * @return the amount of executions of that chain that where put in status {@link ExecutionStatus#ABORTED}
      */
     public int abortChain(Long chainId) {
         return JobExecution.abortChain(entityManager, chainId);
     }
 
-    public List<JobExecution> getAllByStatus(JobExecutionStatus jobExecutionStatus) {
+    public List<JobExecution> getAllByStatus(ExecutionStatus jobExecutionStatus) {
         return JobExecution.getAllByStatus(entityManager, jobExecutionStatus);
     }
 
-    public List<JobExecution> getAllByJobIdAndStatus(Long jobId, JobExecutionStatus jobExecutionStatus) {
+    public List<JobExecution> getAllByJobIdAndStatus(Long jobId, ExecutionStatus jobExecutionStatus) {
         return JobExecution.getAllByJobIdAndStatus(entityManager, jobId, jobExecutionStatus);
     }
 
@@ -352,7 +373,7 @@ public class MySQLLegacyService {
 
         JobExecution jobExecution = new JobExecution();
         jobExecution.setJobId(jobId);
-        jobExecution.setStatus(JobExecutionStatus.QUEUED);
+        jobExecution.setStatus(ExecutionStatus.QUEUED);
         jobExecution.setParameters(parameters);
         jobExecution.setParametersHash(parametersHash);
         jobExecution.setFailRetry(0);
@@ -367,7 +388,7 @@ public class MySQLLegacyService {
         return jobExecution;
     }
 
-    public JobExecution updateJobExecution(Long jobExecutionId, JobExecutionStatus status, String parameters, boolean priority, LocalDateTime maturity,
+    public JobExecution updateJobExecution(Long jobExecutionId, ExecutionStatus status, String parameters, boolean priority, LocalDateTime maturity,
                     int fails) {
 
         JobExecution jobExecution = getJobExecutionById(jobExecutionId);
@@ -388,17 +409,17 @@ public class MySQLLegacyService {
     }
 
     /**
-     * You can redo an {@link JobExecution} in status {@link JobExecutionStatus#FINISHED}, {@link JobExecutionStatus#FAILED} and
-     * {@link JobExecutionStatus#ABORTED}, but all meta data like timestamps and logs of this execution will be gone!
+     * You can redo an {@link JobExecution} in status {@link ExecutionStatus#FINISHED}, {@link ExecutionStatus#FAILED} and {@link ExecutionStatus#ABORTED}, but
+     * all meta data like timestamps and logs of this execution will be gone!
      * 
      * @param jobExecutionId ID of the {@link JobExecution} you wish to redo
-     * @return cleared out {@link JobExecution} in status {@link JobExecutionStatus#QUEUED}
+     * @return cleared out {@link JobExecution} in status {@link ExecutionStatus#QUEUED}
      */
     public JobExecution redoJobExecution(Long jobExecutionId) {
 
         JobExecution jobExecution = getJobExecutionById(jobExecutionId);
 
-        if (JobExecutionStatus.QUEUED == jobExecution.getStatus() || JobExecutionStatus.RUNNING == jobExecution.getStatus()) {
+        if (ExecutionStatus.QUEUED == jobExecution.getStatus() || ExecutionStatus.RUNNING == jobExecution.getStatus()) {
             logger.warn("Can't redo JobExecution in status {}: {}", jobExecution.getStatus(), jobExecution);
             return jobExecution;
         }
@@ -406,7 +427,7 @@ public class MySQLLegacyService {
         logger.info("Redo {} {}", jobExecution.getStatus(), jobExecution);
 
         jobExecution.setMaturity(WorkhorseUtil.timestamp());
-        jobExecution.setStatus(JobExecutionStatus.QUEUED);
+        jobExecution.setStatus(ExecutionStatus.QUEUED);
         jobExecution.setStartedAt(null);
         jobExecution.setEndedAt(null);
         jobExecution.setDuration(null);
@@ -419,7 +440,7 @@ public class MySQLLegacyService {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public long currentJobExecutions(Long jobId, JobExecutionStatus jobExecutionStatus) {
+    public long currentJobExecutions(Long jobId, ExecutionStatus jobExecutionStatus) {
         return JobExecution.countByJobIdAndStatus(entityManager, jobId, jobExecutionStatus);
     }
 

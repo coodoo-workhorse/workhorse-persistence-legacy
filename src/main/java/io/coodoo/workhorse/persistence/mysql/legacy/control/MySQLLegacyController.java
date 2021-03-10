@@ -11,12 +11,12 @@ import javax.persistence.EntityManager;
 import io.coodoo.workhorse.core.control.BaseWorker;
 import io.coodoo.workhorse.core.control.JobScheduler;
 import io.coodoo.workhorse.core.control.Workhorse;
+import io.coodoo.workhorse.core.entity.ExecutionStatus;
+import io.coodoo.workhorse.core.entity.JobStatus;
 import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyService;
 import io.coodoo.workhorse.persistence.mysql.legacy.boundary.annotation.JobEngineEntityManager;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.Job;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.JobExecution;
-import io.coodoo.workhorse.persistence.mysql.legacy.entity.JobExecutionStatus;
-import io.coodoo.workhorse.persistence.mysql.legacy.entity.JobStatus;
 import io.coodoo.workhorse.util.WorkhorseUtil;
 
 /**
@@ -57,7 +57,7 @@ public class MySQLLegacyController {
             JobExecution.abortChain(entityManager, failedExecution.getChainId());
         }
 
-        failedExecution.setStatus(JobExecutionStatus.FAILED);
+        failedExecution.setStatus(ExecutionStatus.FAILED);
         failedExecution.setEndedAt(WorkhorseUtil.timestamp());
         failedExecution.setDuration(duration);
         failedExecution.setLog(jobExecutionLog);

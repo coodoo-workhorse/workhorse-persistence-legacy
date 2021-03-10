@@ -3,6 +3,8 @@ package io.coodoo.workhorse.persistence.mysql.legacy.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import io.coodoo.workhorse.core.entity.ExecutionStatus;
+
 /**
  * @author coodoo GmbH (coodoo.io)
  */
@@ -10,7 +12,7 @@ public class GroupInfo {
 
     private Long id;
 
-    private JobExecutionStatus status;
+    private ExecutionStatus status;
 
     private int size;
 
@@ -110,15 +112,15 @@ public class GroupInfo {
                 }
             }
             if (queued == size) {
-                status = JobExecutionStatus.QUEUED;
+                status = ExecutionStatus.QUEUED;
             } else if (doneCount == size) {
-                status = JobExecutionStatus.FINISHED;
+                status = ExecutionStatus.FINISHED;
                 if (aborted > 0) {
                     // when a chain execution fails, the remaining queued executions get aborted // FIXME: also a batch will be in state ABORTED...
-                    status = JobExecutionStatus.ABORTED;
+                    status = ExecutionStatus.ABORTED;
                 }
             } else if (queued < size) {
-                status = JobExecutionStatus.RUNNING;
+                status = ExecutionStatus.RUNNING;
                 endedAt = null;
             }
         }
@@ -132,11 +134,11 @@ public class GroupInfo {
         this.id = id;
     }
 
-    public JobExecutionStatus getStatus() {
+    public ExecutionStatus getStatus() {
         return status;
     }
 
-    public void setStatus(JobExecutionStatus status) {
+    public void setStatus(ExecutionStatus status) {
         this.status = status;
     }
 

@@ -2,6 +2,8 @@ package io.coodoo.workhorse.persistence.mysql.legacy.entity;
 
 import java.time.LocalDateTime;
 
+import io.coodoo.workhorse.core.entity.ExecutionStatus;
+
 /**
  * @author coodoo GmbH (coodoo.io)
  */
@@ -9,7 +11,7 @@ public class JobExecutionInfo {
 
     private Long id;
 
-    private JobExecutionStatus status;
+    private ExecutionStatus status;
 
     private LocalDateTime startedAt;
 
@@ -21,7 +23,7 @@ public class JobExecutionInfo {
 
     public JobExecutionInfo() {}
 
-    public JobExecutionInfo(Long id, JobExecutionStatus status, LocalDateTime startedAt, LocalDateTime endedAt, Long duration, Long failRetryExecutionId) {
+    public JobExecutionInfo(Long id, ExecutionStatus status, LocalDateTime startedAt, LocalDateTime endedAt, Long duration, Long failRetryExecutionId) {
         super();
         this.id = id;
         this.status = status;
@@ -39,11 +41,11 @@ public class JobExecutionInfo {
         this.id = id;
     }
 
-    public JobExecutionStatus getStatus() {
+    public ExecutionStatus getStatus() {
         return status;
     }
 
-    public void setStatus(JobExecutionStatus status) {
+    public void setStatus(ExecutionStatus status) {
         this.status = status;
     }
 

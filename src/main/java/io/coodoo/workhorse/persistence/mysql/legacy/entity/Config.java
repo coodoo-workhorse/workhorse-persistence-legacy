@@ -13,6 +13,7 @@ import javax.persistence.Query;
 import javax.persistence.Table;
 
 import io.coodoo.framework.jpa.entity.AbstractIdCreatedUpdatedAtEntity;
+import io.coodoo.workhorse.core.entity.ExecutionStatus;
 
 /**
  * Basic configuration<br>
@@ -56,17 +57,17 @@ public class Config extends AbstractIdCreatedUpdatedAtEntity {
     private int jobQueueMin = 100;
 
     /**
-     * A zombie is an execution that is stuck in status {@link JobExecutionStatus#RUNNING} for this amount of minutes (if set to 0 there the hunt is off)
+     * A zombie is an execution that is stuck in status {@link ExecutionStatus#RUNNING} for this amount of minutes (if set to 0 there the hunt is off)
      */
     @Column(name = "zombie_recognition_time")
     private int zombieRecognitionTime = 120;
 
     /**
-     * If an execution is stuck in status {@link JobExecutionStatus#RUNNING} and doesn't change, it has became a zombie! Once found we have a cure!
+     * If an execution is stuck in status {@link ExecutionStatus#RUNNING} and doesn't change, it has became a zombie! Once found we have a cure!
      */
     @Column(name = "zombie_cure_status")
     @Enumerated(EnumType.STRING)
-    private JobExecutionStatus zombieCureStatus = JobExecutionStatus.ABORTED;
+    private ExecutionStatus zombieCureStatus = ExecutionStatus.ABORTED;
 
     /**
      * Days until minute by minute statistic records gets deleted (0 to keep all)
@@ -151,11 +152,11 @@ public class Config extends AbstractIdCreatedUpdatedAtEntity {
         this.zombieRecognitionTime = zombieRecognitionTime;
     }
 
-    public JobExecutionStatus getZombieCureStatus() {
+    public ExecutionStatus getZombieCureStatus() {
         return zombieCureStatus;
     }
 
-    public void setZombieCureStatus(JobExecutionStatus zombieCureStatus) {
+    public void setZombieCureStatus(ExecutionStatus zombieCureStatus) {
         this.zombieCureStatus = zombieCureStatus;
     }
 

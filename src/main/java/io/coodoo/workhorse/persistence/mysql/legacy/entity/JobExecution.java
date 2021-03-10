@@ -14,6 +14,7 @@ import javax.persistence.Query;
 import javax.persistence.Table;
 
 import io.coodoo.framework.jpa.entity.AbstractIdCreatedUpdatedAtEntity;
+import io.coodoo.workhorse.core.entity.ExecutionStatus;
 import io.coodoo.workhorse.util.WorkhorseUtil;
 
 /**
@@ -62,7 +63,7 @@ import io.coodoo.workhorse.util.WorkhorseUtil;
                                 query = "DELETE FROM JobExecution j WHERE j.jobId = :jobId AND j.createdAt < :preDate"),
                 @NamedQuery(name = "JobExecution.selectDuration", query = "SELECT j.duration FROM JobExecution j WHERE j.id = :jobExecutionId"),
                 @NamedQuery(name = "JobExecution.findZombies",
-                                query = "SELECT j FROM JobExecution j WHERE j.startedAt < :time AND j.status = io.coodoo.workhorse.jobengine.entity.JobExecutionStatus.RUNNING"),
+                                query = "SELECT j FROM JobExecution j WHERE j.startedAt < :time AND j.status = io.coodoo.workhorse.jobengine.entity.ExecutionStatus.RUNNING"),
 
                 // Status
                 @NamedQuery(name = "JobExecution.updateStatusRunning",
@@ -95,7 +96,7 @@ public class JobExecution extends AbstractIdCreatedUpdatedAtEntity {
      */
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private JobExecutionStatus status;
+    private ExecutionStatus status;
 
     @Column(name = "started_at")
     private LocalDateTime startedAt;
@@ -162,11 +163,11 @@ public class JobExecution extends AbstractIdCreatedUpdatedAtEntity {
         this.jobId = jobId;
     }
 
-    public JobExecutionStatus getStatus() {
+    public ExecutionStatus getStatus() {
         return status;
     }
 
-    public void setStatus(JobExecutionStatus status) {
+    public void setStatus(ExecutionStatus status) {
         this.status = status;
     }
 
@@ -333,7 +334,7 @@ public class JobExecution extends AbstractIdCreatedUpdatedAtEntity {
      * @return List of result objects
      */
     @SuppressWarnings("unchecked")
-    public static List<JobExecution> getAllByStatus(EntityManager entityManager, JobExecutionStatus status) {
+    public static List<JobExecution> getAllByStatus(EntityManager entityManager, ExecutionStatus status) {
         Query query = entityManager.createNamedQuery("JobExecution.getAllByStatus");
         query = query.setParameter("status", status);
         return query.getResultList();
@@ -348,7 +349,7 @@ public class JobExecution extends AbstractIdCreatedUpdatedAtEntity {
      * @return List of result objects
      */
     @SuppressWarnings("unchecked")
-    public static List<JobExecution> getAllByJobIdAndStatus(EntityManager entityManager, Long jobId, JobExecutionStatus status) {
+    public static List<JobExecution> getAllByJobIdAndStatus(EntityManager entityManager, Long jobId, ExecutionStatus status) {
         Query query = entityManager.createNamedQuery("JobExecution.getAllByJobIdAndStatus");
         query = query.setParameter("jobId", jobId);
         query = query.setParameter("status", status);
@@ -400,7 +401,7 @@ public class JobExecution extends AbstractIdCreatedUpdatedAtEntity {
      * @param status the status
      * @return the result
      */
-    public static Long countBatchByStatus(EntityManager entityManager, Long batchId, JobExecutionStatus status) {
+    public static Long countBatchByStatus(EntityManager entityManager, Long batchId, ExecutionStatus status) {
         Query query = entityManager.createNamedQuery("JobExecution.countBatchByStatus");
         query = query.setParameter("batchId", batchId);
         query = query.setParameter("status", status);
@@ -621,7 +622,7 @@ public class JobExecution extends AbstractIdCreatedUpdatedAtEntity {
      * @param status the status
      * @return the result
      */
-    public static Long countByJobIdAndStatus(EntityManager entityManager, Long jobId, JobExecutionStatus status) {
+    public static Long countByJobIdAndStatus(EntityManager entityManager, Long jobId, ExecutionStatus status) {
         Query query = entityManager.createNamedQuery("JobExecution.countByJobIdAndStatus");
         query = query.setParameter("jobId", jobId);
         query = query.setParameter("status", status);

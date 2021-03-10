@@ -11,6 +11,7 @@ import javax.persistence.Query;
 import javax.persistence.Table;
 
 import io.coodoo.framework.jpa.entity.AbstractIdCreatedUpdatedAtEntity;
+import io.coodoo.workhorse.core.entity.JobStatus;
 
 /**
  * A log to record changes on jobs

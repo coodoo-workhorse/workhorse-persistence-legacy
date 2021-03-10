@@ -16,6 +16,7 @@ import javax.persistence.Table;
 
 import io.coodoo.framework.jpa.entity.AbstractIdOccCreatedUpdatedAtEntity;
 import io.coodoo.framework.listing.boundary.annotation.ListingFilterAsString;
+import io.coodoo.workhorse.core.entity.JobStatus;
 
 /**
  * @author coodoo GmbH (coodoo.io)
