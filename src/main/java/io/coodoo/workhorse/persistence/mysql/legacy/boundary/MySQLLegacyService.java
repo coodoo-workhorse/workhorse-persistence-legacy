@@ -139,8 +139,18 @@ public class MySQLLegacyService {
         return log;
     }
 
-    public int deleteAllByJobId(Long jobId) {
+    public int deleteAllLogsByJobId(Long jobId) {
         return Log.deleteAllByJobId(entityManager, jobId);
+    }
+
+    public Log deleteLogsById(Long logId) {
+
+        Log log = getLog(logId);
+        if (log != null) {
+            entityManager.remove(log);
+            logger.info("Deleted: {}", log);
+        }
+        return log;
     }
 
     public void activateJob(Long jobId) {
@@ -241,7 +251,7 @@ public class MySQLLegacyService {
         DbJob job = getJobById(jobId);
 
         int deletedJobExecutions = JobExecution.deleteAllByJobId(entityManager, jobId);
-        int deletedJobLogs = deleteAllByJobId(jobId);
+        int deletedJobLogs = deleteAllLogsByJobId(jobId);
 
         entityManager.remove(job);
 
