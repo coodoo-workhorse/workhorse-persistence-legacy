@@ -48,6 +48,22 @@ public class MysqlLegacyLogPersistence implements LogPersistence {
     }
 
     @Override
+    public ListingResult<WorkhorseLog> getWorkhorseLogListing(io.coodoo.workhorse.persistence.interfaces.listing.ListingParameters listingParameters) {
+
+        ListingParameters params = new ListingParameters(listingParameters.getPage(), listingParameters.getLimit(), listingParameters.getSortAttribute());
+        params.setFilterAttributes(listingParameters.getFilterAttributes());
+        params.setFilter(listingParameters.getFilter());
+
+        io.coodoo.framework.listing.boundary.ListingResult<LegacyLog> result = mySQLLegacyController.listLogs(params);
+        List<WorkhorseLog> results = result.getResults().stream().map(l -> map(l)).collect(Collectors.toList());
+
+        io.coodoo.workhorse.persistence.interfaces.listing.Metadata metadata =
+                        new io.coodoo.workhorse.persistence.interfaces.listing.Metadata(result.getMetadata().getCount(), listingParameters);
+
+        return new ListingResult<WorkhorseLog>(results, metadata);
+    }
+
+    @Override
     public WorkhorseLog update(Long logId, WorkhorseLog workhorseLog) {
         throw new RuntimeException("Dare you changing the log?!");
     }
@@ -81,12 +97,6 @@ public class MysqlLegacyLogPersistence implements LogPersistence {
     @Override
     public void connect(Object... params) {
         // TODO ?!
-    }
-
-    @Override
-    public ListingResult<WorkhorseLog> getWorkhorseLogListing(io.coodoo.workhorse.persistence.interfaces.listing.ListingParameters listingParameters) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }

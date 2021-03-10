@@ -6,11 +6,11 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import io.coodoo.framework.listing.boundary.ListingParameters;
+import io.coodoo.framework.listing.boundary.ListingResult;
 import io.coodoo.workhorse.core.entity.Job;
 import io.coodoo.workhorse.core.entity.JobStatus;
 import io.coodoo.workhorse.persistence.interfaces.JobPersistence;
-import io.coodoo.workhorse.persistence.interfaces.listing.ListingParameters;
-import io.coodoo.workhorse.persistence.interfaces.listing.ListingResult;
 import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyConfig;
 import io.coodoo.workhorse.persistence.mysql.legacy.control.MySQLLegacyController;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyJob;
@@ -28,10 +28,10 @@ public class MysqlLegacyJobPersistence implements JobPersistence {
 
     @Override
     public Job get(Long jobId) {
-        return mapJob(mySQLLegacyController.getJobById(jobId));
+        return map(mySQLLegacyController.getJobById(jobId));
     }
 
-    private Job mapJob(LegacyJob dbJob) {
+    private Job map(LegacyJob dbJob) {
         Job job = new Job();
         job.setId(dbJob.getId());
         job.setName(dbJob.getName());
@@ -52,28 +52,46 @@ public class MysqlLegacyJobPersistence implements JobPersistence {
     }
 
     @Override
+    public io.coodoo.workhorse.persistence.interfaces.listing.ListingResult<Job> getJobListing(
+                    io.coodoo.workhorse.persistence.interfaces.listing.ListingParameters listingParameters) {
+
+        ListingParameters params = new ListingParameters(listingParameters.getPage(), listingParameters.getLimit(), listingParameters.getSortAttribute());
+        params.setFilterAttributes(listingParameters.getFilterAttributes());
+        params.setFilter(listingParameters.getFilter());
+
+        ListingResult<LegacyJob> result = mySQLLegacyController.listJobs(params);
+
+        List<Job> results = result.getResults().stream().map(l -> map(l)).collect(Collectors.toList());
+
+        io.coodoo.workhorse.persistence.interfaces.listing.Metadata metadata =
+                        new io.coodoo.workhorse.persistence.interfaces.listing.Metadata(result.getMetadata().getCount(), listingParameters);
+
+        return new io.coodoo.workhorse.persistence.interfaces.listing.ListingResult<Job>(results, metadata);
+    }
+
+    @Override
     public Job getByName(String jobName) {
-        return mapJob(mySQLLegacyController.getJobByClassName(jobName));
+        return map(mySQLLegacyController.getJobByClassName(jobName));
     }
 
     @Override
     public Job getByWorkerClassName(String jobClassName) {
-        return mapJob(mySQLLegacyController.getJobByClassName(jobClassName));
+        return map(mySQLLegacyController.getJobByClassName(jobClassName));
     }
 
     @Override
     public List<Job> getAll() {
-        return mySQLLegacyController.getAllJobs().stream().map(j -> mapJob(j)).collect(Collectors.toList());
+        return mySQLLegacyController.getAllJobs().stream().map(j -> map(j)).collect(Collectors.toList());
     }
 
     @Override
     public List<Job> getAllByStatus(JobStatus jobStatus) {
-        return mySQLLegacyController.getAllByStatus(jobStatus).stream().map(j -> mapJob(j)).collect(Collectors.toList());
+        return mySQLLegacyController.getAllByStatus(jobStatus).stream().map(j -> map(j)).collect(Collectors.toList());
     }
 
     @Override
     public List<Job> getAllScheduled() {
-        return mySQLLegacyController.getAllScheduledJobs().stream().map(j -> mapJob(j)).collect(Collectors.toList());
+        return mySQLLegacyController.getAllScheduledJobs().stream().map(j -> map(j)).collect(Collectors.toList());
     }
 
     @Override
@@ -92,7 +110,7 @@ public class MysqlLegacyJobPersistence implements JobPersistence {
         LegacyJob createJob = mySQLLegacyController.createJob(job.getName(), job.getDescription(), job.getTags(), job.getWorkerClassName(),
                         job.getParametersClassName(), job.getSchedule(), job.getStatus(), job.getThreads(), job.getMaxPerMinute(), job.getFailRetries(),
                         job.getRetryDelay(), daysuntilCleanup, job.isUniqueQueued());
-        return mapJob(createJob);
+        return map(createJob);
     }
 
     @Override
@@ -101,7 +119,7 @@ public class MysqlLegacyJobPersistence implements JobPersistence {
         LegacyJob createJob = mySQLLegacyController.updateJob(job.getId(), job.getName(), job.getDescription(), job.getTags(), job.getWorkerClassName(),
                         job.getSchedule(), job.getStatus(), job.getThreads(), job.getMaxPerMinute(), job.getFailRetries(), job.getRetryDelay(),
                         daysuntilCleanup, job.isUniqueQueued());
-        return mapJob(createJob);
+        return map(createJob);
     }
 
     @Override
@@ -112,12 +130,6 @@ public class MysqlLegacyJobPersistence implements JobPersistence {
     @Override
     public String getPersistenceName() {
         return MySQLLegacyConfig.NAME;
-    }
-
-    @Override
-    public ListingResult<Job> getJobListing(ListingParameters listingParameters) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }

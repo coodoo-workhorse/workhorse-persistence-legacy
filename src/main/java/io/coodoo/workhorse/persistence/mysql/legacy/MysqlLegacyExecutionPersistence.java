@@ -13,6 +13,7 @@ import io.coodoo.workhorse.core.entity.ExecutionFailStatus;
 import io.coodoo.workhorse.core.entity.ExecutionLog;
 import io.coodoo.workhorse.core.entity.ExecutionStatus;
 import io.coodoo.workhorse.persistence.interfaces.ExecutionPersistence;
+import io.coodoo.workhorse.persistence.interfaces.listing.ListingResult;
 import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyConfig;
 import io.coodoo.workhorse.persistence.mysql.legacy.control.MySQLLegacyController;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyExecution;
@@ -68,21 +69,18 @@ public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
     @Override
     public io.coodoo.workhorse.persistence.interfaces.listing.ListingResult<Execution> getExecutionListing(
                     io.coodoo.workhorse.persistence.interfaces.listing.ListingParameters listingParameters) {
-        //
-        //
-        //
-        // ListingParameters listingParameters = new ListingParameters(limit.intValue());
-        //
-        // mySQLLegacyController.listExecutions(listingParameters);
-        //
-        //
-        //
-        // io.coodoo.framework.listing.boundary.ListingParameters ddd = new ListingParameters();
-        //
-        //
-        // ListingResult<LegacyExecution> x = mySQLLegacyController.listExecutions(ddd);
 
-        return null;
+        ListingParameters params = new ListingParameters(listingParameters.getPage(), listingParameters.getLimit(), listingParameters.getSortAttribute());
+        params.setFilterAttributes(listingParameters.getFilterAttributes());
+        params.setFilter(listingParameters.getFilter());
+
+        io.coodoo.framework.listing.boundary.ListingResult<LegacyExecution> result = mySQLLegacyController.listExecutions(params);
+        List<Execution> results = result.getResults().stream().map(l -> map(l)).collect(Collectors.toList());
+
+        io.coodoo.workhorse.persistence.interfaces.listing.Metadata metadata =
+                        new io.coodoo.workhorse.persistence.interfaces.listing.Metadata(result.getMetadata().getCount(), listingParameters);
+
+        return new ListingResult<Execution>(results, metadata);
     }
 
     @Override
