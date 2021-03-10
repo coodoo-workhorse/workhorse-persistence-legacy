@@ -79,6 +79,14 @@ public class MySQLLegacyService {
         return config;
     }
 
+    public ListingResult<JobExecution> listExecutions(ListingParameters listingParameters) {
+        return Listing.getListingResult(entityManager, JobExecution.class, listingParameters);
+    }
+
+    public ListingResult<DbJob> listJobs(ListingParameters listingParameters) {
+        return Listing.getListingResult(entityManager, DbJob.class, listingParameters);
+    }
+
     public ListingResult<Log> listLogs(ListingParameters listingParameters) {
         return Listing.getListingResult(entityManager, Log.class, listingParameters);
     }

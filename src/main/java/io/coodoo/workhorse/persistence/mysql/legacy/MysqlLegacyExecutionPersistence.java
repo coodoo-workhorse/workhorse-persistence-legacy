@@ -142,8 +142,7 @@ public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
 
     @Override
     public void connect(Object... params) {
-        // TODO Auto-generated method stub
-
+        // TODO ?!
     }
 
     @Override
@@ -153,7 +152,6 @@ public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
 
     @Override
     public boolean isPusherAvailable() {
-        // TODO Auto-generated method stub
         return false;
     }
 
