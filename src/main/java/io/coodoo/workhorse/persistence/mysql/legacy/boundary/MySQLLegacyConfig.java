@@ -85,7 +85,7 @@ public class MySQLLegacyConfig extends WorkhorseConfig {
     public MySQLLegacyConfig() {
 
         timeZone = "UTC";
-        bufferMax = new Long(JOB_QUEUE_MAX);
+        bufferMax = JOB_QUEUE_MAX;
         bufferMin = JOB_QUEUE_MIN;
         bufferPollInterval = JOB_QUEUE_POLLER_INTERVAL;
         bufferPushFallbackPollInterval = JOB_QUEUE_POLLER_INTERVAL;

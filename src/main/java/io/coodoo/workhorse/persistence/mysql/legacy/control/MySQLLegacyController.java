@@ -1,7 +1,5 @@
 package io.coodoo.workhorse.persistence.mysql.legacy.control;
 
-import java.time.LocalDateTime;
-
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -37,11 +35,6 @@ public class MySQLLegacyController {
 
     @Inject
     MySQLLegacyService jobEngineService;
-
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public int deleteOlderJobExecutions(Long jobId, int minDaysOld) {
-        return JobExecution.deleteOlderJobExecutions(entityManager, jobId, LocalDateTime.now().minusDays(minDaysOld));
-    }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public synchronized JobExecution handleFailedExecution(DbJob job, Long jobExecutionId, Exception exception, Long duration, String jobExecutionLog,

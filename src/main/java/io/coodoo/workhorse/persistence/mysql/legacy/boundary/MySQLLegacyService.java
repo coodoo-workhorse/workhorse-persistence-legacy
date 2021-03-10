@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import io.coodoo.framework.listing.boundary.Listing;
 import io.coodoo.framework.listing.boundary.ListingParameters;
 import io.coodoo.framework.listing.boundary.ListingResult;
+import io.coodoo.workhorse.core.control.StaticConfig;
 import io.coodoo.workhorse.core.entity.ExecutionStatus;
 import io.coodoo.workhorse.core.entity.JobStatus;
 import io.coodoo.workhorse.persistence.mysql.legacy.boundary.annotation.JobEngineEntityManager;
@@ -81,6 +82,10 @@ public class MySQLLegacyService {
 
     public ListingResult<JobExecution> listExecutions(ListingParameters listingParameters) {
         return Listing.getListingResult(entityManager, JobExecution.class, listingParameters);
+    }
+
+    public Long countExecutions(ListingParameters listingParameters) {
+        return Listing.countListing(entityManager, JobExecution.class, listingParameters);
     }
 
     public ListingResult<DbJob> listJobs(ListingParameters listingParameters) {
@@ -341,38 +346,27 @@ public class MySQLLegacyService {
         return JobExecution.getAllByJobIdAndStatus(entityManager, jobId, jobExecutionStatus);
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public JobExecution createJobExecution(Long jobId, String parameters, Boolean priority, LocalDateTime maturity, Long batchId, Long chainId,
-                    Long previousJobExecutionId, boolean uniqueInQueue) {
+    public List<JobExecution> getNextCandidates(Long jobId) {
+        return JobExecution.getNextCandidates(entityManager, jobId, StaticConfig.BUFFER_MAX);
+    }
 
-        Integer parametersHash = null;
-        if (parameters != null) {
-            parametersHash = parameters.hashCode();
-            if (parameters.trim().isEmpty() || parameters.isEmpty()) {
-                parameters = null;
-                parametersHash = null;
-            }
-        }
+    public List<JobExecution> findZombies(LocalDateTime time) {
+        return JobExecution.findZombies(entityManager, time);
+    }
 
-        if (uniqueInQueue) {
-            // Prüfen ob es bereits eine Job Excecution mit diesn Parametern existiert und im Status QUEUED ist. Wenn ja diese zurückgeben.
-            JobExecution equalQueuedJobExcecution = JobExecution.getFirstCreatedByJobIdAndParametersHash(entityManager, jobId, parametersHash);
-            if (equalQueuedJobExcecution != null) {
-                return equalQueuedJobExcecution;
-            }
-        }
+    public JobExecution createJobExecution(Long jobId, ExecutionStatus status, boolean priority, LocalDateTime maturity, Long batchId, Long chainId,
+                    String parameters, Integer parametersHash) {
 
         JobExecution jobExecution = new JobExecution();
         jobExecution.setJobId(jobId);
-        jobExecution.setStatus(ExecutionStatus.QUEUED);
+        jobExecution.setStatus(status);
+        jobExecution.setPriority(priority);
         jobExecution.setParameters(parameters);
         jobExecution.setParametersHash(parametersHash);
         jobExecution.setFailRetry(0);
-        jobExecution.setPriority(priority != null ? priority : false);
         jobExecution.setMaturity(maturity);
         jobExecution.setBatchId(batchId);
         jobExecution.setChainId(chainId);
-        jobExecution.setChainPreviousExecutionId(previousJobExecutionId);
 
         entityManager.persist(jobExecution);
         logger.debug("JobExecution created: {}", jobExecution);
@@ -392,11 +386,27 @@ public class MySQLLegacyService {
         return jobExecution;
     }
 
+    public JobExecution updateJobExecutionStatus(Long jobExecutionId, ExecutionStatus status) {
+
+        JobExecution jobExecution = getJobExecutionById(jobExecutionId);
+        jobExecution.setStatus(status);
+        logger.info("JobExecution updated: {}", jobExecution);
+        return jobExecution;
+    }
+
+    public JobExecution getFirstCreatedByJobIdAndParametersHash(Long jobId, Object parametersHash) {
+        return JobExecution.getFirstCreatedByJobIdAndParametersHash(entityManager, jobId, parametersHash);
+    }
+
     public void deleteJobExecution(Long jobExecutionId) {
 
         JobExecution jobExecution = getJobExecutionById(jobExecutionId);
         entityManager.remove(jobExecution);
         logger.info("JobExecution removed: {}", jobExecution);
+    }
+
+    public int deleteOlderJobExecutions(Long jobId, LocalDateTime preDate) {
+        return JobExecution.deleteOlderJobExecutions(entityManager, jobId, preDate);
     }
 
     /**

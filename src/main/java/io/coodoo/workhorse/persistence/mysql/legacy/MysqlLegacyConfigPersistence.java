@@ -29,7 +29,7 @@ public class MysqlLegacyConfigPersistence implements ConfigPersistence {
     private WorkhorseConfig mapConfig(Config config) {
         WorkhorseConfig workhorseConfig = new MySQLLegacyConfig();
         workhorseConfig.setTimeZone(config.getTimeZone());
-        workhorseConfig.setBufferMax(new Long(config.getJobQueueMax()));
+        workhorseConfig.setBufferMax(config.getJobQueueMax());
         workhorseConfig.setBufferMin(config.getJobQueueMin());
         workhorseConfig.setBufferPollInterval(config.getJobQueuePollerInterval());
         workhorseConfig.setBufferPushFallbackPollInterval(config.getJobQueuePollerInterval());
@@ -50,10 +50,10 @@ public class MysqlLegacyConfigPersistence implements ConfigPersistence {
                             + MySQLLegacyConfig.MINUTES_UNTIL_CLEANUP + " minutes)");
         }
 
-        Config config = mySQLLegacyService.updateConfig(workhorseConfig.getTimeZone(), workhorseConfig.getBufferPollInterval(),
-                        workhorseConfig.getBufferMax().intValue(), workhorseConfig.getBufferMin(), workhorseConfig.getExecutionTimeout(),
-                        workhorseConfig.getExecutionTimeoutStatus(), 0, 0, workhorseConfig.getLogChange(), workhorseConfig.getLogTimeFormat(),
-                        workhorseConfig.getLogInfoMarker(), workhorseConfig.getLogWarnMarker(), workhorseConfig.getLogErrorMarker());
+        Config config = mySQLLegacyService.updateConfig(workhorseConfig.getTimeZone(), workhorseConfig.getBufferPollInterval(), workhorseConfig.getBufferMax(),
+                        workhorseConfig.getBufferMin(), workhorseConfig.getExecutionTimeout(), workhorseConfig.getExecutionTimeoutStatus(), 0, 0,
+                        workhorseConfig.getLogChange(), workhorseConfig.getLogTimeFormat(), workhorseConfig.getLogInfoMarker(),
+                        workhorseConfig.getLogWarnMarker(), workhorseConfig.getLogErrorMarker());
 
         return mapConfig(config);
     }
