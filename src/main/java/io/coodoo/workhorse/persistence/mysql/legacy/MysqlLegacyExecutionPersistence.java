@@ -6,6 +6,9 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 
 import io.coodoo.workhorse.core.entity.Execution;
+import io.coodoo.workhorse.core.entity.ExecutionFailStatus;
+import io.coodoo.workhorse.core.entity.ExecutionLog;
+import io.coodoo.workhorse.core.entity.ExecutionStatus;
 import io.coodoo.workhorse.persistence.interfaces.ExecutionPersistence;
 import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyConfig;
 
@@ -18,7 +21,7 @@ import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyConfig;
 public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
 
     @Override
-    public Execution getById(Long jobId, Long id) {
+    public Execution getById(Long jobId, Long executionId) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -42,19 +45,25 @@ public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
     }
 
     @Override
-    public void persist(Execution execution) {
+    public Execution persist(Execution execution) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void delete(Long jobId, Long executionId) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void delete(Long jobId, Long id) {
+    public Execution update(Execution execution) {
         // TODO Auto-generated method stub
-
+        return null;
     }
 
     @Override
-    public Execution update(Long jobId, Long id, Execution execution) {
+    public Execution updateStatus(Long jobId, Long executionId, ExecutionStatus status, ExecutionFailStatus failStatus) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -90,18 +99,6 @@ public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
     }
 
     @Override
-    public Execution addExecutionAtEndOfChain(Long jobId, Long chainId, Execution execution) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Execution getNextQueuedExecutionInChain(Long jobId, Long chainId, Execution execution) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public Execution getFirstCreatedByJobIdAndParametersHash(Long jobId, Integer parameterHash) {
         // TODO Auto-generated method stub
         return null;
@@ -120,9 +117,27 @@ public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
     }
 
     @Override
-    public List<Execution> findExpiredExecutions(LocalDateTime time) {
+    public List<Execution> findTimeoutExecutions(LocalDateTime time) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public ExecutionLog getLog(Long jobId, Long executionId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void log(Long jobId, Long executionId, String log) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void log(Long jobId, Long executionId, String error, String stacktrace) {
+        // TODO Auto-generated method stub
+
     }
 
     @Override

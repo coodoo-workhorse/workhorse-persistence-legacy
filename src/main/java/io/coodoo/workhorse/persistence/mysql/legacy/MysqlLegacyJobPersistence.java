@@ -18,7 +18,7 @@ import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyConfig;
 public class MysqlLegacyJobPersistence implements JobPersistence {
 
     @Override
-    public Job get(Long id) {
+    public Job get(Long jobId) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -66,13 +66,13 @@ public class MysqlLegacyJobPersistence implements JobPersistence {
     }
 
     @Override
-    public void persist(Job job) {
+    public Job persist(Job job) {
         // TODO Auto-generated method stub
-
+        return null;
     }
 
     @Override
-    public void update(Long id, Job job) {
+    public void update(Job job) {
         // TODO Auto-generated method stub
 
     }

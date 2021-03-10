@@ -17,19 +17,19 @@ import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyConfig;
 public class MysqlLegacyLogPersistence implements LogPersistence {
 
     @Override
-    public WorkhorseLog get(Long id) {
+    public WorkhorseLog get(Long logId) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public WorkhorseLog update(Long id, WorkhorseLog workhorseLog) {
+    public WorkhorseLog update(Long logId, WorkhorseLog workhorseLog) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public WorkhorseLog delete(Long id) {
+    public WorkhorseLog delete(Long logId) {
         // TODO Auto-generated method stub
         return null;
     }
