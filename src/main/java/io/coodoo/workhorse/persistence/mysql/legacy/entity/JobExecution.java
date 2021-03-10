@@ -77,7 +77,7 @@ import io.coodoo.workhorse.util.WorkhorseUtil;
                 @NamedQuery(name = "JobExecution.countQueudByJobIdAndParamters",
                                 query = "SELECT COUNT(j) FROM JobExecution j WHERE j.jobId = :jobId AND j.status = 'QUEUED' and (j.parameters IS NULL or j.parameters = :parameters)"),
                 @NamedQuery(name = "JobExecution.countByJobIdAndStatus",
-                                query = "SELECT COUNT(j) FROM JobExecution j WHERE j.jobId = :jobId AND j.status = :status")
+                                query = "SELECT COUNT(j) FROM JobExecution j WHERE j.jobId = :jobId AND j.status = :status"),
 
 })
 

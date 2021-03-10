@@ -328,6 +328,16 @@ public class MySQLLegacyService {
         return JobExecution.getChain(entityManager, chainId);
     }
 
+    public void appendExecutionLog(Long jobId, Long executionId, String log) {
+        String query = "UPDATE jobengine_execution SET log = CONCAT(IFNULL(log, ''), '" + log + "') WHERE id = " + executionId;
+        entityManager.createNativeQuery(query).executeUpdate();
+    }
+
+    public void appendExecutionFailure(Long jobId, Long executionId, String error, String stacktrace) {
+        String query = "UPDATE jobengine_execution SET fail_message = '" + error + "', fail_stacktrace = '" + stacktrace + "'  WHERE id = " + executionId;
+        entityManager.createNativeQuery(query).executeUpdate();
+    }
+
     /**
      * Abort all executions of a chain that are in status {@link ExecutionStatus#QUEUED}
      * 

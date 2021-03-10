@@ -156,20 +156,29 @@ public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
 
     @Override
     public ExecutionLog getLog(Long jobId, Long executionId) {
-        // TODO Auto-generated method stub
-        return null;
+
+        JobExecution jobExecution = mySQLLegacyService.getJobExecutionById(executionId);
+
+        ExecutionLog executionLog = new ExecutionLog();
+        executionLog.setId(jobExecution.getId());
+        executionLog.setExecutionId(jobExecution.getId());
+        executionLog.setLog(jobExecution.getLog());
+        executionLog.setError(jobExecution.getFailMessage());
+        executionLog.setStacktrace(jobExecution.getFailStacktrace());
+        executionLog.setCreatedAt(jobExecution.getCreatedAt());
+        executionLog.setUpdatedAt(jobExecution.getUpdatedAt());
+
+        return executionLog;
     }
 
     @Override
     public void log(Long jobId, Long executionId, String log) {
-        // TODO Auto-generated method stub
-
+        mySQLLegacyService.appendExecutionLog(jobId, executionId, log);
     }
 
     @Override
     public void log(Long jobId, Long executionId, String error, String stacktrace) {
-        // TODO Auto-generated method stub
-
+        mySQLLegacyService.appendExecutionFailure(jobId, executionId, error, stacktrace);
     }
 
     @Override
