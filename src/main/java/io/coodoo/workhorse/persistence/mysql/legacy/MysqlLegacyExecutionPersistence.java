@@ -14,8 +14,8 @@ import io.coodoo.workhorse.core.entity.ExecutionLog;
 import io.coodoo.workhorse.core.entity.ExecutionStatus;
 import io.coodoo.workhorse.persistence.interfaces.ExecutionPersistence;
 import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyConfig;
-import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyService;
-import io.coodoo.workhorse.persistence.mysql.legacy.entity.JobExecution;
+import io.coodoo.workhorse.persistence.mysql.legacy.control.MySQLLegacyController;
+import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyExecution;
 
 /**
  * Legacy support for the MySQL Persistence of Workhorse version 1.5
@@ -26,14 +26,14 @@ import io.coodoo.workhorse.persistence.mysql.legacy.entity.JobExecution;
 public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
 
     @Inject
-    MySQLLegacyService mySQLLegacyService;
+    MySQLLegacyController mySQLLegacyController;
 
     @Override
     public Execution getById(Long jobId, Long executionId) {
-        return map(mySQLLegacyService.getJobExecutionById(executionId));
+        return map(mySQLLegacyController.getJobExecutionById(executionId));
     }
 
-    private Execution map(JobExecution jobExecution) {
+    private Execution map(LegacyExecution jobExecution) {
         Execution execution = new Execution();
         execution.setId(jobExecution.getId());
         execution.setJobId(jobExecution.getJobId());
@@ -62,60 +62,60 @@ public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
         ListingParameters listingParameters = new ListingParameters(limit.intValue());
         listingParameters.addFilterAttributes("jobId", jobId.toString());
 
-        return mySQLLegacyService.listExecutions(listingParameters).getResults().stream().map(e -> map(e)).collect(Collectors.toList());
+        return mySQLLegacyController.listExecutions(listingParameters).getResults().stream().map(e -> map(e)).collect(Collectors.toList());
     }
 
     @Override
     public List<Execution> pollNextExecutions(Long jobId, int limit) {
-        return mySQLLegacyService.getNextCandidates(jobId).stream().map(e -> map(e)).collect(Collectors.toList());
+        return mySQLLegacyController.getNextCandidates(jobId).stream().map(e -> map(e)).collect(Collectors.toList());
     }
 
     @Override
     public Long count() {
-        return mySQLLegacyService.countExecutions(new ListingParameters());
+        return mySQLLegacyController.countExecutions(new ListingParameters());
     }
 
     @Override
     public Execution persist(Execution execution) {
-        return map(mySQLLegacyService.createJobExecution(execution.getJobId(), execution.getStatus(), execution.isPriority(), execution.getPlannedFor(),
+        return map(mySQLLegacyController.createJobExecution(execution.getJobId(), execution.getStatus(), execution.isPriority(), execution.getPlannedFor(),
                         execution.getBatchId(), execution.getChainId(), execution.getParameters(), execution.getParametersHash()));
     }
 
     @Override
     public void delete(Long jobId, Long executionId) {
-        mySQLLegacyService.deleteJobExecution(executionId);
+        mySQLLegacyController.deleteJobExecution(executionId);
     }
 
     @Override
     public Execution update(Execution execution) {
-        return map(mySQLLegacyService.updateJobExecution(execution.getId(), execution.getStatus(), execution.getParameters(), execution.isPriority(),
+        return map(mySQLLegacyController.updateJobExecution(execution.getId(), execution.getStatus(), execution.getParameters(), execution.isPriority(),
                         execution.getPlannedFor(), execution.getFailRetry()));
     }
 
     @Override
     public Execution updateStatus(Long jobId, Long executionId, ExecutionStatus status, ExecutionFailStatus failStatus) {
-        return map(mySQLLegacyService.updateJobExecutionStatus(executionId, status));
+        return map(mySQLLegacyController.updateJobExecutionStatus(executionId, status));
     }
 
     @Override
     public int deleteOlderExecutions(Long jobId, LocalDateTime preDate) {
-        return mySQLLegacyService.deleteOlderJobExecutions(jobId, preDate);
+        return mySQLLegacyController.deleteOlderJobExecutions(jobId, preDate);
     }
 
     @Override
     public List<Execution> getBatch(Long jobId, Long batchId) {
-        return mySQLLegacyService.getJobExecutionBatch(batchId).stream().map(e -> map(e)).collect(Collectors.toList());
+        return mySQLLegacyController.getJobExecutionBatch(batchId).stream().map(e -> map(e)).collect(Collectors.toList());
     }
 
     @Override
     public List<Execution> getChain(Long jobId, Long chainId) {
-        return mySQLLegacyService.getJobExecutionChain(chainId).stream().map(e -> map(e)).collect(Collectors.toList());
+        return mySQLLegacyController.getJobExecutionChain(chainId).stream().map(e -> map(e)).collect(Collectors.toList());
     }
 
     @Override
     public Execution getQueuedBatchExecution(Long jobId, Long batchId) {
 
-        JobExecution jobExecution = mySQLLegacyService.getJobExecutionById(batchId);
+        LegacyExecution jobExecution = mySQLLegacyController.getJobExecutionById(batchId);
 
         if (jobExecution != null && (jobExecution.getStatus() == ExecutionStatus.QUEUED || jobExecution.getStatus() == ExecutionStatus.PLANNED)) {
             return map(jobExecution);
@@ -131,33 +131,33 @@ public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
         listingParameters.addFilterAttributes("batchId", batchId.toString());
         listingParameters.addFilterAttributes("status", ExecutionStatus.FAILED.toString());
 
-        return mySQLLegacyService.listExecutions(listingParameters).getResults().stream().map(e -> map(e)).collect(Collectors.toList());
+        return mySQLLegacyController.listExecutions(listingParameters).getResults().stream().map(e -> map(e)).collect(Collectors.toList());
     }
 
     @Override
     public Execution getFirstCreatedByJobIdAndParametersHash(Long jobId, Integer parameterHash) {
-        return map(mySQLLegacyService.getFirstCreatedByJobIdAndParametersHash(jobId, parameterHash));
+        return map(mySQLLegacyController.getFirstCreatedByJobIdAndParametersHash(jobId, parameterHash));
     }
 
     @Override
     public boolean isBatchFinished(Long jobId, Long batchId) {
-        return mySQLLegacyService.isBatchFinished(batchId);
+        return mySQLLegacyController.isBatchFinished(batchId);
     }
 
     @Override
     public boolean abortChain(Long jobId, Long chainId) {
-        return mySQLLegacyService.abortChain(chainId) > 0;
+        return mySQLLegacyController.abortChain(chainId) > 0;
     }
 
     @Override
     public List<Execution> findTimeoutExecutions(LocalDateTime time) {
-        return mySQLLegacyService.findZombies(time).stream().map(e -> map(e)).collect(Collectors.toList());
+        return mySQLLegacyController.findZombies(time).stream().map(e -> map(e)).collect(Collectors.toList());
     }
 
     @Override
     public ExecutionLog getLog(Long jobId, Long executionId) {
 
-        JobExecution jobExecution = mySQLLegacyService.getJobExecutionById(executionId);
+        LegacyExecution jobExecution = mySQLLegacyController.getJobExecutionById(executionId);
 
         ExecutionLog executionLog = new ExecutionLog();
         executionLog.setId(jobExecution.getId());
@@ -173,12 +173,12 @@ public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
 
     @Override
     public void log(Long jobId, Long executionId, String log) {
-        mySQLLegacyService.appendExecutionLog(jobId, executionId, log);
+        mySQLLegacyController.appendExecutionLog(jobId, executionId, log);
     }
 
     @Override
     public void log(Long jobId, Long executionId, String error, String stacktrace) {
-        mySQLLegacyService.appendExecutionFailure(jobId, executionId, error, stacktrace);
+        mySQLLegacyController.appendExecutionFailure(jobId, executionId, error, stacktrace);
     }
 
     @Override

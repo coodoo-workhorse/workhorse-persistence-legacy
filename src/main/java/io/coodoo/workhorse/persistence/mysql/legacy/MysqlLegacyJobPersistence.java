@@ -10,8 +10,8 @@ import io.coodoo.workhorse.core.entity.Job;
 import io.coodoo.workhorse.core.entity.JobStatus;
 import io.coodoo.workhorse.persistence.interfaces.JobPersistence;
 import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyConfig;
-import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyService;
-import io.coodoo.workhorse.persistence.mysql.legacy.entity.DbJob;
+import io.coodoo.workhorse.persistence.mysql.legacy.control.MySQLLegacyController;
+import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyJob;
 
 /**
  * Legacy support for the MySQL Persistence of Workhorse version 1.5
@@ -22,14 +22,14 @@ import io.coodoo.workhorse.persistence.mysql.legacy.entity.DbJob;
 public class MysqlLegacyJobPersistence implements JobPersistence {
 
     @Inject
-    MySQLLegacyService mySQLLegacyService;
+    MySQLLegacyController mySQLLegacyController;
 
     @Override
     public Job get(Long jobId) {
-        return mapJob(mySQLLegacyService.getJobById(jobId));
+        return mapJob(mySQLLegacyController.getJobById(jobId));
     }
 
-    private Job mapJob(DbJob dbJob) {
+    private Job mapJob(LegacyJob dbJob) {
         Job job = new Job();
         job.setId(dbJob.getId());
         job.setName(dbJob.getName());
@@ -51,43 +51,43 @@ public class MysqlLegacyJobPersistence implements JobPersistence {
 
     @Override
     public Job getByName(String jobName) {
-        return mapJob(mySQLLegacyService.getJobByClassName(jobName));
+        return mapJob(mySQLLegacyController.getJobByClassName(jobName));
     }
 
     @Override
     public Job getByWorkerClassName(String jobClassName) {
-        return mapJob(mySQLLegacyService.getJobByClassName(jobClassName));
+        return mapJob(mySQLLegacyController.getJobByClassName(jobClassName));
     }
 
     @Override
     public List<Job> getAll() {
-        return mySQLLegacyService.getAllJobs().stream().map(j -> mapJob(j)).collect(Collectors.toList());
+        return mySQLLegacyController.getAllJobs().stream().map(j -> mapJob(j)).collect(Collectors.toList());
     }
 
     @Override
     public List<Job> getAllByStatus(JobStatus jobStatus) {
-        return mySQLLegacyService.getAllByStatus(jobStatus).stream().map(j -> mapJob(j)).collect(Collectors.toList());
+        return mySQLLegacyController.getAllByStatus(jobStatus).stream().map(j -> mapJob(j)).collect(Collectors.toList());
     }
 
     @Override
     public List<Job> getAllScheduled() {
-        return mySQLLegacyService.getAllScheduledJobs().stream().map(j -> mapJob(j)).collect(Collectors.toList());
+        return mySQLLegacyController.getAllScheduledJobs().stream().map(j -> mapJob(j)).collect(Collectors.toList());
     }
 
     @Override
     public Long count() {
-        return mySQLLegacyService.countAllJobs();
+        return mySQLLegacyController.countAllJobs();
     }
 
     @Override
     public Long countByStatus(JobStatus jobStatus) {
-        return mySQLLegacyService.countJobsByStatus(jobStatus);
+        return mySQLLegacyController.countJobsByStatus(jobStatus);
     }
 
     @Override
     public Job persist(Job job) {
         int daysuntilCleanup = job.getMinutesUntilCleanUp() * 24 * 60;
-        DbJob createJob = mySQLLegacyService.createJob(job.getName(), job.getDescription(), job.getTags(), job.getWorkerClassName(),
+        LegacyJob createJob = mySQLLegacyController.createJob(job.getName(), job.getDescription(), job.getTags(), job.getWorkerClassName(),
                         job.getParametersClassName(), job.getSchedule(), job.getStatus(), job.getThreads(), job.getMaxPerMinute(), job.getFailRetries(),
                         job.getRetryDelay(), daysuntilCleanup, job.isUniqueQueued());
         return mapJob(createJob);
@@ -96,7 +96,7 @@ public class MysqlLegacyJobPersistence implements JobPersistence {
     @Override
     public Job update(Job job) {
         int daysuntilCleanup = job.getMinutesUntilCleanUp() * 24 * 60;
-        DbJob createJob = mySQLLegacyService.updateJob(job.getId(), job.getName(), job.getDescription(), job.getTags(), job.getWorkerClassName(),
+        LegacyJob createJob = mySQLLegacyController.updateJob(job.getId(), job.getName(), job.getDescription(), job.getTags(), job.getWorkerClassName(),
                         job.getSchedule(), job.getStatus(), job.getThreads(), job.getMaxPerMinute(), job.getFailRetries(), job.getRetryDelay(),
                         daysuntilCleanup, job.isUniqueQueued());
         return mapJob(createJob);

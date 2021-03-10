@@ -10,8 +10,8 @@ import io.coodoo.framework.listing.boundary.ListingParameters;
 import io.coodoo.workhorse.core.entity.WorkhorseLog;
 import io.coodoo.workhorse.persistence.interfaces.LogPersistence;
 import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyConfig;
-import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyService;
-import io.coodoo.workhorse.persistence.mysql.legacy.entity.Log;
+import io.coodoo.workhorse.persistence.mysql.legacy.control.MySQLLegacyController;
+import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyLog;
 
 /**
  * Legacy support for the MySQL Persistence of Workhorse version 1.5
@@ -22,14 +22,14 @@ import io.coodoo.workhorse.persistence.mysql.legacy.entity.Log;
 public class MysqlLegacyLogPersistence implements LogPersistence {
 
     @Inject
-    MySQLLegacyService mySQLLegacyService;
+    MySQLLegacyController mySQLLegacyController;
 
     @Override
     public WorkhorseLog get(Long logId) {
-        return map(mySQLLegacyService.getLog(logId));
+        return map(mySQLLegacyController.getLog(logId));
     }
 
-    private WorkhorseLog map(Log log) {
+    private WorkhorseLog map(LegacyLog log) {
         WorkhorseLog workhorseLog = new WorkhorseLog();
         workhorseLog.setId(log.getId());
         workhorseLog.setMessage(log.getMessage());
@@ -53,23 +53,23 @@ public class MysqlLegacyLogPersistence implements LogPersistence {
 
     @Override
     public WorkhorseLog delete(Long logId) {
-        return map(mySQLLegacyService.deleteLogsById(logId));
+        return map(mySQLLegacyController.deleteLogsById(logId));
     }
 
     @Override
     public WorkhorseLog persist(WorkhorseLog workhorseLog) {
-        return map(mySQLLegacyService.createLog(workhorseLog.getMessage(), workhorseLog.getJobId(), workhorseLog.getJobStatus(), workhorseLog.isByUser(),
+        return map(mySQLLegacyController.createLog(workhorseLog.getMessage(), workhorseLog.getJobId(), workhorseLog.getJobStatus(), workhorseLog.isByUser(),
                         workhorseLog.getChangeParameter(), workhorseLog.getChangeOld(), workhorseLog.getChangeNew(), workhorseLog.getStacktrace()));
     }
 
     @Override
     public List<WorkhorseLog> getAll(int limit) {
-        return mySQLLegacyService.listLogs(new ListingParameters(limit)).getResults().stream().map(l -> map(l)).collect(Collectors.toList());
+        return mySQLLegacyController.listLogs(new ListingParameters(limit)).getResults().stream().map(l -> map(l)).collect(Collectors.toList());
     }
 
     @Override
     public int deleteByJobId(Long jobId) {
-        return mySQLLegacyService.deleteAllLogsByJobId(jobId);
+        return mySQLLegacyController.deleteAllLogsByJobId(jobId);
     }
 
     @Override

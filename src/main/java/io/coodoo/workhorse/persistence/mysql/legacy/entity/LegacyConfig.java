@@ -28,7 +28,7 @@ import io.coodoo.workhorse.core.entity.ExecutionStatus;
                 @NamedQuery(name = "Config.getConfig", query = "SELECT c FROM Config c")
 
 })
-public class Config extends AbstractIdCreatedUpdatedAtEntity {
+public class LegacyConfig extends AbstractIdCreatedUpdatedAtEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -261,7 +261,7 @@ public class Config extends AbstractIdCreatedUpdatedAtEntity {
      * @param entityManager the entityManager
      * @return the result
      */
-    public static Config getConfig(EntityManager entityManager) {
+    public static LegacyConfig getConfig(EntityManager entityManager) {
         Query query = entityManager.createNamedQuery("Config.getConfig");
         query = query.setMaxResults(1);
         @SuppressWarnings("rawtypes")
@@ -269,7 +269,7 @@ public class Config extends AbstractIdCreatedUpdatedAtEntity {
         if (results.isEmpty()) {
             return null;
         }
-        return (Config) results.get(0);
+        return (LegacyConfig) results.get(0);
     }
 
 }

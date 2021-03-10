@@ -34,7 +34,7 @@ import io.coodoo.workhorse.core.entity.JobStatus;
                 @NamedQuery(name = "Job.getAllScheduled", query = "SELECT job FROM Job job WHERE job.schedule IS NOT NULL")
 
 })
-public class DbJob extends AbstractIdOccCreatedUpdatedAtEntity {
+public class LegacyJob extends AbstractIdOccCreatedUpdatedAtEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -232,7 +232,7 @@ public class DbJob extends AbstractIdOccCreatedUpdatedAtEntity {
      * @return List of result objects
      */
     @SuppressWarnings("unchecked")
-    public static List<DbJob> getAllByStatus(EntityManager entityManager, JobStatus status) {
+    public static List<LegacyJob> getAllByStatus(EntityManager entityManager, JobStatus status) {
         Query query = entityManager.createNamedQuery("Job.getAllByStatus");
         query = query.setParameter("status", status);
         return query.getResultList();
@@ -245,7 +245,7 @@ public class DbJob extends AbstractIdOccCreatedUpdatedAtEntity {
      * @param name the name
      * @return the result
      */
-    public static DbJob getByName(EntityManager entityManager, String name) {
+    public static LegacyJob getByName(EntityManager entityManager, String name) {
         Query query = entityManager.createNamedQuery("Job.getByName");
         query = query.setParameter("name", name);
         query = query.setMaxResults(1);
@@ -254,7 +254,7 @@ public class DbJob extends AbstractIdOccCreatedUpdatedAtEntity {
         if (results.isEmpty()) {
             return null;
         }
-        return (DbJob) results.get(0);
+        return (LegacyJob) results.get(0);
     }
 
     /**
@@ -264,7 +264,7 @@ public class DbJob extends AbstractIdOccCreatedUpdatedAtEntity {
      * @param workerClassName the workerClassName
      * @return the result
      */
-    public static DbJob getByWorkerClassName(EntityManager entityManager, String workerClassName) {
+    public static LegacyJob getByWorkerClassName(EntityManager entityManager, String workerClassName) {
         Query query = entityManager.createNamedQuery("Job.getByWorkerClassName");
         query = query.setParameter("workerClassName", workerClassName);
         query = query.setMaxResults(1);
@@ -273,7 +273,7 @@ public class DbJob extends AbstractIdOccCreatedUpdatedAtEntity {
         if (results.isEmpty()) {
             return null;
         }
-        return (DbJob) results.get(0);
+        return (LegacyJob) results.get(0);
     }
 
     /**
@@ -283,7 +283,7 @@ public class DbJob extends AbstractIdOccCreatedUpdatedAtEntity {
      * @return List of result objects
      */
     @SuppressWarnings("unchecked")
-    public static List<DbJob> getAll(EntityManager entityManager) {
+    public static List<LegacyJob> getAll(EntityManager entityManager) {
         Query query = entityManager.createNamedQuery("Job.getAll");
         return query.getResultList();
     }
@@ -314,7 +314,7 @@ public class DbJob extends AbstractIdOccCreatedUpdatedAtEntity {
      * @return List of result objects
      */
     @SuppressWarnings("unchecked")
-    public static List<DbJob> getAllScheduled(EntityManager entityManager) {
+    public static List<LegacyJob> getAllScheduled(EntityManager entityManager) {
         Query query = entityManager.createNamedQuery("Job.getAllScheduled");
         return query.getResultList();
     }

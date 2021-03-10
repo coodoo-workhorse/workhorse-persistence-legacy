@@ -81,7 +81,7 @@ import io.coodoo.workhorse.util.WorkhorseUtil;
 
 })
 
-public class JobExecution extends AbstractIdCreatedUpdatedAtEntity {
+public class LegacyExecution extends AbstractIdCreatedUpdatedAtEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -307,7 +307,7 @@ public class JobExecution extends AbstractIdCreatedUpdatedAtEntity {
      * @return List of result objects
      */
     @SuppressWarnings("unchecked")
-    public static List<JobExecution> getAllByJobId(EntityManager entityManager, Long jobId) {
+    public static List<LegacyExecution> getAllByJobId(EntityManager entityManager, Long jobId) {
         Query query = entityManager.createNamedQuery("JobExecution.getAllByJobId");
         query = query.setParameter("jobId", jobId);
         return query.getResultList();
@@ -334,7 +334,7 @@ public class JobExecution extends AbstractIdCreatedUpdatedAtEntity {
      * @return List of result objects
      */
     @SuppressWarnings("unchecked")
-    public static List<JobExecution> getAllByStatus(EntityManager entityManager, ExecutionStatus status) {
+    public static List<LegacyExecution> getAllByStatus(EntityManager entityManager, ExecutionStatus status) {
         Query query = entityManager.createNamedQuery("JobExecution.getAllByStatus");
         query = query.setParameter("status", status);
         return query.getResultList();
@@ -349,7 +349,7 @@ public class JobExecution extends AbstractIdCreatedUpdatedAtEntity {
      * @return List of result objects
      */
     @SuppressWarnings("unchecked")
-    public static List<JobExecution> getAllByJobIdAndStatus(EntityManager entityManager, Long jobId, ExecutionStatus status) {
+    public static List<LegacyExecution> getAllByJobIdAndStatus(EntityManager entityManager, Long jobId, ExecutionStatus status) {
         Query query = entityManager.createNamedQuery("JobExecution.getAllByJobIdAndStatus");
         query = query.setParameter("jobId", jobId);
         query = query.setParameter("status", status);
@@ -357,7 +357,7 @@ public class JobExecution extends AbstractIdCreatedUpdatedAtEntity {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<JobExecution> getNextCandidates(EntityManager entityManager, Long jobId, int maxResults) {
+    public static List<LegacyExecution> getNextCandidates(EntityManager entityManager, Long jobId, int maxResults) {
         Query query = entityManager.createNamedQuery("JobExecution.getNextCandidates");
         query = query.setParameter("jobId", jobId);
         query = query.setParameter("currentTime", WorkhorseUtil.timestamp());
@@ -373,22 +373,8 @@ public class JobExecution extends AbstractIdCreatedUpdatedAtEntity {
      * @return List of result objects
      */
     @SuppressWarnings("unchecked")
-    public static List<JobExecution> getBatch(EntityManager entityManager, Long batchId) {
+    public static List<LegacyExecution> getBatch(EntityManager entityManager, Long batchId) {
         Query query = entityManager.createNamedQuery("JobExecution.getBatch");
-        query = query.setParameter("batchId", batchId);
-        return query.getResultList();
-    }
-
-    /**
-     * Executes the query 'JobExecution.getBatchInfo' returning a list of result objects.
-     *
-     * @param entityManager the entityManager
-     * @param batchId the batchId
-     * @return List of result objects
-     */
-    @SuppressWarnings("unchecked")
-    public static List<JobExecutionInfo> getBatchInfo(EntityManager entityManager, Long batchId) {
-        Query query = entityManager.createNamedQuery("JobExecution.getBatchInfo");
         query = query.setParameter("batchId", batchId);
         return query.getResultList();
     }
@@ -435,22 +421,8 @@ public class JobExecution extends AbstractIdCreatedUpdatedAtEntity {
      * @return List of result objects
      */
     @SuppressWarnings("unchecked")
-    public static List<JobExecution> getChain(EntityManager entityManager, Long chainId) {
+    public static List<LegacyExecution> getChain(EntityManager entityManager, Long chainId) {
         Query query = entityManager.createNamedQuery("JobExecution.getChain");
-        query = query.setParameter("chainId", chainId);
-        return query.getResultList();
-    }
-
-    /**
-     * Executes the query 'JobExecution.getChainInfo' returning a list of result objects.
-     *
-     * @param entityManager the entityManager
-     * @param chainId the chainId
-     * @return List of result objects
-     */
-    @SuppressWarnings("unchecked")
-    public static List<JobExecutionInfo> getChainInfo(EntityManager entityManager, Long chainId) {
-        Query query = entityManager.createNamedQuery("JobExecution.getChainInfo");
         query = query.setParameter("chainId", chainId);
         return query.getResultList();
     }
@@ -463,7 +435,7 @@ public class JobExecution extends AbstractIdCreatedUpdatedAtEntity {
      * @param jobExecutionId the jobExecutionId
      * @return the result
      */
-    public static JobExecution getNextInChain(EntityManager entityManager, Long chainId, Long jobExecutionId) {
+    public static LegacyExecution getNextInChain(EntityManager entityManager, Long chainId, Long jobExecutionId) {
         Query query = entityManager.createNamedQuery("JobExecution.getNextInChain");
         query = query.setParameter("chainId", chainId);
         query = query.setParameter("jobExecutionId", jobExecutionId);
@@ -473,7 +445,7 @@ public class JobExecution extends AbstractIdCreatedUpdatedAtEntity {
         if (results.isEmpty()) {
             return null;
         }
-        return (JobExecution) results.get(0);
+        return (LegacyExecution) results.get(0);
     }
 
     /**
@@ -531,7 +503,7 @@ public class JobExecution extends AbstractIdCreatedUpdatedAtEntity {
      * @return List of result objects
      */
     @SuppressWarnings("unchecked")
-    public static List<JobExecution> findZombies(EntityManager entityManager, LocalDateTime time) {
+    public static List<LegacyExecution> findZombies(EntityManager entityManager, LocalDateTime time) {
         Query query = entityManager.createNamedQuery("JobExecution.findZombies");
         query = query.setParameter("time", time);
         return query.getResultList();
@@ -580,12 +552,12 @@ public class JobExecution extends AbstractIdCreatedUpdatedAtEntity {
      * @return List of result objects
      */
     @SuppressWarnings("unchecked")
-    public static JobExecution getFirstCreatedByJobIdAndParametersHash(EntityManager entityManager, Long jobId, Object parametersHash) {
+    public static LegacyExecution getFirstCreatedByJobIdAndParametersHash(EntityManager entityManager, Long jobId, Object parametersHash) {
         Query query = entityManager.createNamedQuery("JobExecution.getFirstCreatedByJobIdAndParametersHash");
         query = query.setParameter("jobId", jobId);
         query = query.setParameter("parametersHash", parametersHash);
         query = query.setMaxResults(1);
-        List<JobExecution> resultList = query.getResultList();
+        List<LegacyExecution> resultList = query.getResultList();
         if (resultList.isEmpty()) {
             return null;
         } else {

@@ -6,8 +6,8 @@ import javax.inject.Inject;
 import io.coodoo.workhorse.core.entity.WorkhorseConfig;
 import io.coodoo.workhorse.persistence.interfaces.ConfigPersistence;
 import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyConfig;
-import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyService;
-import io.coodoo.workhorse.persistence.mysql.legacy.entity.Config;
+import io.coodoo.workhorse.persistence.mysql.legacy.control.MySQLLegacyController;
+import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyConfig;
 
 /**
  * Legacy support for the MySQL Persistence of Workhorse version 1.5
@@ -18,15 +18,15 @@ import io.coodoo.workhorse.persistence.mysql.legacy.entity.Config;
 public class MysqlLegacyConfigPersistence implements ConfigPersistence {
 
     @Inject
-    MySQLLegacyService mySQLLegacyService;
+    MySQLLegacyController mySQLLegacyController;
 
     @Override
     public WorkhorseConfig get() {
-        Config config = mySQLLegacyService.getConfig();
+        LegacyConfig config = mySQLLegacyController.getConfig();
         return mapConfig(config);
     }
 
-    private WorkhorseConfig mapConfig(Config config) {
+    private WorkhorseConfig mapConfig(LegacyConfig config) {
         WorkhorseConfig workhorseConfig = new MySQLLegacyConfig();
         workhorseConfig.setTimeZone(config.getTimeZone());
         workhorseConfig.setBufferMax(config.getJobQueueMax());
@@ -50,7 +50,7 @@ public class MysqlLegacyConfigPersistence implements ConfigPersistence {
                             + MySQLLegacyConfig.MINUTES_UNTIL_CLEANUP + " minutes)");
         }
 
-        Config config = mySQLLegacyService.updateConfig(workhorseConfig.getTimeZone(), workhorseConfig.getBufferPollInterval(), workhorseConfig.getBufferMax(),
+        LegacyConfig config = mySQLLegacyController.updateConfig(workhorseConfig.getTimeZone(), workhorseConfig.getBufferPollInterval(), workhorseConfig.getBufferMax(),
                         workhorseConfig.getBufferMin(), workhorseConfig.getExecutionTimeout(), workhorseConfig.getExecutionTimeoutStatus(), 0, 0,
                         workhorseConfig.getLogChange(), workhorseConfig.getLogTimeFormat(), workhorseConfig.getLogInfoMarker(),
                         workhorseConfig.getLogWarnMarker(), workhorseConfig.getLogErrorMarker());

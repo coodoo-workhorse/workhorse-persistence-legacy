@@ -25,7 +25,7 @@ import io.coodoo.workhorse.core.entity.JobStatus;
                 @NamedQuery(name = "Log.deleteAllByJobId", query = "DELETE FROM Log j WHERE j.jobId = :jobId"),
 
 })
-public class Log extends AbstractIdCreatedUpdatedAtEntity {
+public class LegacyLog extends AbstractIdCreatedUpdatedAtEntity {
 
     private static final long serialVersionUID = 1L;
 
