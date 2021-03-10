@@ -25,7 +25,7 @@ import io.coodoo.workhorse.core.entity.ExecutionStatus;
 @Table(name = "jobengine_config")
 @NamedQueries({
 
-                @NamedQuery(name = "Config.getConfig", query = "SELECT c FROM Config c")
+                @NamedQuery(name = "Config.getConfig", query = "SELECT c FROM LegacyConfig c")
 
 })
 public class LegacyConfig extends AbstractIdCreatedUpdatedAtEntity {

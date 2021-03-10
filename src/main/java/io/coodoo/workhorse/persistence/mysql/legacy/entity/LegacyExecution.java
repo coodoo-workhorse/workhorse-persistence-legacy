@@ -31,39 +31,36 @@ import io.coodoo.workhorse.util.WorkhorseUtil;
 @Table(name = "jobengine_execution")
 @NamedQueries({
 
-                @NamedQuery(name = "JobExecution.getAllByJobId", query = "SELECT j FROM JobExecution j WHERE j.jobId = :jobId"),
-                @NamedQuery(name = "JobExecution.deleteAllByJobId", query = "DELETE FROM JobExecution j WHERE j.jobId = :jobId"),
-                @NamedQuery(name = "JobExecution.getAllByStatus", query = "SELECT j FROM JobExecution j WHERE j.status = :status"),
-                @NamedQuery(name = "JobExecution.getAllByJobIdAndStatus", query = "SELECT j FROM JobExecution j WHERE j.jobId = :jobId AND j.status = :status"),
+                @NamedQuery(name = "JobExecution.getAllByJobId", query = "SELECT j FROM LegacyExecution j WHERE j.jobId = :jobId"),
+                @NamedQuery(name = "JobExecution.deleteAllByJobId", query = "DELETE FROM LegacyExecution j WHERE j.jobId = :jobId"),
+                @NamedQuery(name = "JobExecution.getAllByStatus", query = "SELECT j FROM LegacyExecution j WHERE j.status = :status"),
+                @NamedQuery(name = "JobExecution.getAllByJobIdAndStatus",
+                                query = "SELECT j FROM LegacyExecution j WHERE j.jobId = :jobId AND j.status = :status"),
 
                 // Poller
                 @NamedQuery(name = "JobExecution.getNextCandidates",
-                                query = "SELECT j FROM JobExecution j WHERE j.jobId = :jobId AND j.status = 'QUEUED' AND (j.maturity IS NULL OR j.maturity < :currentTime) AND j.chainPreviousExecutionId IS NULL ORDER BY j.priority, j.createdAt"),
+                                query = "SELECT j FROM LegacyExecution j WHERE j.jobId = :jobId AND j.status = 'QUEUED' AND (j.maturity IS NULL OR j.maturity < :currentTime) AND j.chainPreviousExecutionId IS NULL ORDER BY j.priority, j.createdAt"),
 
                 // Batch
-                @NamedQuery(name = "JobExecution.getBatch", query = "SELECT j FROM JobExecution j WHERE j.batchId = :batchId ORDER BY j.createdAt, j.id"),
-                @NamedQuery(name = "JobExecution.getBatchInfo",
-                                query = "SELECT NEW io.coodoo.workhorse.jobengine.entity.JobExecutionInfo(j.id, j.status, j.startedAt, j.endedAt, j.duration, j.failRetryExecutionId) FROM JobExecution j WHERE j.batchId = :batchId ORDER BY j.createdAt, j.id"),
+                @NamedQuery(name = "JobExecution.getBatch", query = "SELECT j FROM LegacyExecution j WHERE j.batchId = :batchId ORDER BY j.createdAt, j.id"),
                 @NamedQuery(name = "JobExecution.countBatchByStatus",
-                                query = "SELECT COUNT(j) FROM JobExecution j WHERE j.batchId = :batchId AND j.status = :status"),
+                                query = "SELECT COUNT(j) FROM LegacyExecution j WHERE j.batchId = :batchId AND j.status = :status"),
                 @NamedQuery(name = "JobExecution.abortBatch",
                                 query = "UPDATE JobExecution j SET j.status = 'ABORTED' WHERE j.batchId = :batchId AND j.status = 'QUEUED'"),
 
                 // Chained
-                @NamedQuery(name = "JobExecution.getChain", query = "SELECT j FROM JobExecution j WHERE j.chainId = :chainId ORDER BY j.createdAt, j.id"),
-                @NamedQuery(name = "JobExecution.getChainInfo",
-                                query = "SELECT NEW io.coodoo.workhorse.jobengine.entity.JobExecutionInfo(j.id, j.status, j.startedAt, j.endedAt, j.duration, j.failRetryExecutionId) FROM JobExecution j WHERE j.chainId = :chainId ORDER BY j.createdAt, j.id"),
+                @NamedQuery(name = "JobExecution.getChain", query = "SELECT j FROM LegacyExecution j WHERE j.chainId = :chainId ORDER BY j.createdAt, j.id"),
                 @NamedQuery(name = "JobExecution.getNextInChain",
-                                query = "SELECT j FROM JobExecution j WHERE j.chainId = :chainId AND j.chainPreviousExecutionId = :jobExecutionId"),
+                                query = "SELECT j FROM LegacyExecution j WHERE j.chainId = :chainId AND j.chainPreviousExecutionId = :jobExecutionId"),
                 @NamedQuery(name = "JobExecution.abortChain",
                                 query = "UPDATE JobExecution j SET j.status = 'ABORTED' WHERE j.chainId = :chainId AND j.status = 'QUEUED'"),
 
                 // Misc
                 @NamedQuery(name = "JobExecution.deleteOlderJobExecutions",
-                                query = "DELETE FROM JobExecution j WHERE j.jobId = :jobId AND j.createdAt < :preDate"),
-                @NamedQuery(name = "JobExecution.selectDuration", query = "SELECT j.duration FROM JobExecution j WHERE j.id = :jobExecutionId"),
+                                query = "DELETE FROM LegacyExecution j WHERE j.jobId = :jobId AND j.createdAt < :preDate"),
+                @NamedQuery(name = "JobExecution.selectDuration", query = "SELECT j.duration FROM LegacyExecution j WHERE j.id = :jobExecutionId"),
                 @NamedQuery(name = "JobExecution.findZombies",
-                                query = "SELECT j FROM JobExecution j WHERE j.startedAt < :time AND j.status = io.coodoo.workhorse.jobengine.entity.ExecutionStatus.RUNNING"),
+                                query = "SELECT j FROM LegacyExecution j WHERE j.startedAt < :time AND j.status = io.coodoo.workhorse.jobengine.entity.ExecutionStatus.RUNNING"),
 
                 // Status
                 @NamedQuery(name = "JobExecution.updateStatusRunning",
@@ -73,11 +70,11 @@ import io.coodoo.workhorse.util.WorkhorseUtil;
 
                 // Analytic
                 @NamedQuery(name = "JobExecution.getFirstCreatedByJobIdAndParametersHash",
-                                query = "SELECT j FROM JobExecution j WHERE j.jobId = :jobId AND j.status = 'QUEUED' AND (j.parametersHash IS NULL OR j.parametersHash = :parametersHash) ORDER BY j.createdAt ASC"),
+                                query = "SELECT j FROM LegacyExecution j WHERE j.jobId = :jobId AND j.status = 'QUEUED' AND (j.parametersHash IS NULL OR j.parametersHash = :parametersHash) ORDER BY j.createdAt ASC"),
                 @NamedQuery(name = "JobExecution.countQueudByJobIdAndParamters",
-                                query = "SELECT COUNT(j) FROM JobExecution j WHERE j.jobId = :jobId AND j.status = 'QUEUED' and (j.parameters IS NULL or j.parameters = :parameters)"),
+                                query = "SELECT COUNT(j) FROM LegacyExecution j WHERE j.jobId = :jobId AND j.status = 'QUEUED' and (j.parameters IS NULL or j.parameters = :parameters)"),
                 @NamedQuery(name = "JobExecution.countByJobIdAndStatus",
-                                query = "SELECT COUNT(j) FROM JobExecution j WHERE j.jobId = :jobId AND j.status = :status"),
+                                query = "SELECT COUNT(j) FROM LegacyExecution j WHERE j.jobId = :jobId AND j.status = :status"),
 
 })
 

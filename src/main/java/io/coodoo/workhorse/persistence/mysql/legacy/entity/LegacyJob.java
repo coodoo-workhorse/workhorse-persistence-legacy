@@ -25,13 +25,13 @@ import io.coodoo.workhorse.core.entity.JobStatus;
 @Table(name = "jobengine_job")
 @NamedQueries({
 
-                @NamedQuery(name = "Job.getAll", query = "SELECT job FROM Job job"),
-                @NamedQuery(name = "Job.getByName", query = "SELECT job FROM Job job WHERE job.name=:name"),
-                @NamedQuery(name = "Job.getByWorkerClassName", query = "SELECT job FROM Job job WHERE job.workerClassName=:workerClassName"),
-                @NamedQuery(name = "Job.getAllByStatus", query = "SELECT job FROM Job job WHERE job.status=:status"),
-                @NamedQuery(name = "Job.countAll", query = "SELECT COUNT(job) FROM Job job"),
-                @NamedQuery(name = "Job.countAllByStatus", query = "SELECT COUNT(job) FROM Job job WHERE job.status=:status"),
-                @NamedQuery(name = "Job.getAllScheduled", query = "SELECT job FROM Job job WHERE job.schedule IS NOT NULL")
+                @NamedQuery(name = "Job.getAll", query = "SELECT job FROM LegacyJob job"),
+                @NamedQuery(name = "Job.getByName", query = "SELECT job FROM LegacyJob job WHERE job.name=:name"),
+                @NamedQuery(name = "Job.getByWorkerClassName", query = "SELECT job FROM LegacyJob job WHERE job.workerClassName=:workerClassName"),
+                @NamedQuery(name = "Job.getAllByStatus", query = "SELECT job FROM LegacyJob job WHERE job.status=:status"),
+                @NamedQuery(name = "Job.countAll", query = "SELECT COUNT(job) FROM LegacyJob job"),
+                @NamedQuery(name = "Job.countAllByStatus", query = "SELECT COUNT(job) FROM LegacyJob job WHERE job.status=:status"),
+                @NamedQuery(name = "Job.getAllScheduled", query = "SELECT job FROM LegacyJob job WHERE job.schedule IS NOT NULL")
 
 })
 public class LegacyJob extends AbstractIdOccCreatedUpdatedAtEntity {

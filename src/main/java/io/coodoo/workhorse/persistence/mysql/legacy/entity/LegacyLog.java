@@ -22,7 +22,7 @@ import io.coodoo.workhorse.core.entity.JobStatus;
 @Table(name = "jobengine_log")
 @NamedQueries({
 
-                @NamedQuery(name = "Log.deleteAllByJobId", query = "DELETE FROM Log j WHERE j.jobId = :jobId"),
+                @NamedQuery(name = "Log.deleteAllByJobId", query = "DELETE FROM LegacyLog j WHERE j.jobId = :jobId"),
 
 })
 public class LegacyLog extends AbstractIdCreatedUpdatedAtEntity {
