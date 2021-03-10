@@ -9,6 +9,8 @@ import javax.inject.Inject;
 import io.coodoo.workhorse.core.entity.Job;
 import io.coodoo.workhorse.core.entity.JobStatus;
 import io.coodoo.workhorse.persistence.interfaces.JobPersistence;
+import io.coodoo.workhorse.persistence.interfaces.listing.ListingParameters;
+import io.coodoo.workhorse.persistence.interfaces.listing.ListingResult;
 import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyConfig;
 import io.coodoo.workhorse.persistence.mysql.legacy.control.MySQLLegacyController;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyJob;
@@ -110,6 +112,12 @@ public class MysqlLegacyJobPersistence implements JobPersistence {
     @Override
     public String getPersistenceName() {
         return MySQLLegacyConfig.NAME;
+    }
+
+    @Override
+    public ListingResult<Job> getJobListing(ListingParameters listingParameters) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

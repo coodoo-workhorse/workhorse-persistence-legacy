@@ -66,6 +66,26 @@ public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
     }
 
     @Override
+    public io.coodoo.workhorse.persistence.interfaces.listing.ListingResult<Execution> getExecutionListing(
+                    io.coodoo.workhorse.persistence.interfaces.listing.ListingParameters listingParameters) {
+        //
+        //
+        //
+        // ListingParameters listingParameters = new ListingParameters(limit.intValue());
+        //
+        // mySQLLegacyController.listExecutions(listingParameters);
+        //
+        //
+        //
+        // io.coodoo.framework.listing.boundary.ListingParameters ddd = new ListingParameters();
+        //
+        //
+        // ListingResult<LegacyExecution> x = mySQLLegacyController.listExecutions(ddd);
+
+        return null;
+    }
+
+    @Override
     public List<Execution> pollNextExecutions(Long jobId, int limit) {
         return mySQLLegacyController.getNextCandidates(jobId).stream().map(e -> map(e)).collect(Collectors.toList());
     }

@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import io.coodoo.framework.listing.boundary.ListingParameters;
 import io.coodoo.workhorse.core.entity.WorkhorseLog;
 import io.coodoo.workhorse.persistence.interfaces.LogPersistence;
+import io.coodoo.workhorse.persistence.interfaces.listing.ListingResult;
 import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyConfig;
 import io.coodoo.workhorse.persistence.mysql.legacy.control.MySQLLegacyController;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyLog;
@@ -80,6 +81,12 @@ public class MysqlLegacyLogPersistence implements LogPersistence {
     @Override
     public void connect(Object... params) {
         // TODO ?!
+    }
+
+    @Override
+    public ListingResult<WorkhorseLog> getWorkhorseLogListing(io.coodoo.workhorse.persistence.interfaces.listing.ListingParameters listingParameters) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
