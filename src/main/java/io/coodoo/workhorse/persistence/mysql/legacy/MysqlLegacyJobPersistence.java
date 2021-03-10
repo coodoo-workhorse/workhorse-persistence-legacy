@@ -1,13 +1,17 @@
 package io.coodoo.workhorse.persistence.mysql.legacy;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import io.coodoo.workhorse.core.entity.Job;
 import io.coodoo.workhorse.core.entity.JobStatus;
 import io.coodoo.workhorse.persistence.interfaces.JobPersistence;
 import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyConfig;
+import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyService;
+import io.coodoo.workhorse.persistence.mysql.legacy.entity.DbJob;
 
 /**
  * Legacy support for the MySQL Persistence of Workhorse version 1.5
@@ -17,70 +21,90 @@ import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyConfig;
 @ApplicationScoped
 public class MysqlLegacyJobPersistence implements JobPersistence {
 
+    @Inject
+    MySQLLegacyService mySQLLegacyService;
+
     @Override
     public Job get(Long jobId) {
-        // TODO Auto-generated method stub
-        return null;
+        return mapJob(mySQLLegacyService.getJobById(jobId));
+    }
+
+    private Job mapJob(DbJob dbJob) {
+        Job job = new Job();
+        job.setId(dbJob.getId());
+        job.setName(dbJob.getName());
+        job.setDescription(dbJob.getDescription());
+        job.setWorkerClassName(dbJob.getWorkerClassName());
+        job.setParametersClassName(dbJob.getParametersClassName());
+        job.setStatus(dbJob.getStatus());
+        job.setThreads(dbJob.getThreads());
+        job.setMaxPerMinute(dbJob.getMaxPerMinute());
+        job.setFailRetries(dbJob.getFailRetries());
+        job.setRetryDelay(dbJob.getRetryDelay());
+        job.setMinutesUntilCleanUp(dbJob.getDaysUntilCleanUp() / 24 / 60);
+        job.setUniqueQueued(dbJob.isUniqueInQueue());
+        job.setSchedule(dbJob.getSchedule());
+        job.setCreatedAt(dbJob.getCreatedAt());
+        job.setUpdatedAt(dbJob.getUpdatedAt());
+        return job;
     }
 
     @Override
     public Job getByName(String jobName) {
-        // TODO Auto-generated method stub
-        return null;
+        return mapJob(mySQLLegacyService.getJobByClassName(jobName));
     }
 
     @Override
     public Job getByWorkerClassName(String jobClassName) {
-        // TODO Auto-generated method stub
-        return null;
+        return mapJob(mySQLLegacyService.getJobByClassName(jobClassName));
     }
 
     @Override
     public List<Job> getAll() {
-        // TODO Auto-generated method stub
-        return null;
+        return mySQLLegacyService.getAllJobs().stream().map(j -> mapJob(j)).collect(Collectors.toList());
     }
 
     @Override
     public List<Job> getAllByStatus(JobStatus jobStatus) {
-        // TODO Auto-generated method stub
-        return null;
+        return mySQLLegacyService.getAllByStatus(jobStatus).stream().map(j -> mapJob(j)).collect(Collectors.toList());
     }
 
     @Override
     public List<Job> getAllScheduled() {
-        // TODO Auto-generated method stub
-        return null;
+        return mySQLLegacyService.getAllScheduledJobs().stream().map(j -> mapJob(j)).collect(Collectors.toList());
     }
 
     @Override
     public Long count() {
-        // TODO Auto-generated method stub
-        return null;
+        return mySQLLegacyService.countAllJobs();
     }
 
     @Override
     public Long countByStatus(JobStatus jobStatus) {
-        // TODO Auto-generated method stub
-        return null;
+        return mySQLLegacyService.countJobsByStatus(jobStatus);
     }
 
     @Override
     public Job persist(Job job) {
-        // TODO Auto-generated method stub
-        return null;
+        int daysuntilCleanup = job.getMinutesUntilCleanUp() * 24 * 60;
+        DbJob createJob = mySQLLegacyService.createJob(job.getName(), job.getDescription(), job.getTags(), job.getWorkerClassName(),
+                        job.getParametersClassName(), job.getSchedule(), job.getStatus(), job.getThreads(), job.getMaxPerMinute(), job.getFailRetries(),
+                        job.getRetryDelay(), daysuntilCleanup, job.isUniqueQueued());
+        return mapJob(createJob);
     }
 
     @Override
-    public void update(Job job) {
-        // TODO Auto-generated method stub
-
+    public Job update(Job job) {
+        int daysuntilCleanup = job.getMinutesUntilCleanUp() * 24 * 60;
+        DbJob createJob = mySQLLegacyService.updateJob(job.getId(), job.getName(), job.getDescription(), job.getTags(), job.getWorkerClassName(),
+                        job.getSchedule(), job.getStatus(), job.getThreads(), job.getMaxPerMinute(), job.getFailRetries(), job.getRetryDelay(),
+                        daysuntilCleanup, job.isUniqueQueued());
+        return mapJob(createJob);
     }
 
     @Override
     public void connect(Object... params) {
-        // TODO Auto-generated method stub
-
+        // TODO ?!
     }
 
     @Override

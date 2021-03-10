@@ -15,7 +15,7 @@ import io.coodoo.workhorse.core.entity.ExecutionStatus;
 import io.coodoo.workhorse.core.entity.JobStatus;
 import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyService;
 import io.coodoo.workhorse.persistence.mysql.legacy.boundary.annotation.JobEngineEntityManager;
-import io.coodoo.workhorse.persistence.mysql.legacy.entity.Job;
+import io.coodoo.workhorse.persistence.mysql.legacy.entity.DbJob;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.JobExecution;
 import io.coodoo.workhorse.util.WorkhorseUtil;
 
@@ -44,7 +44,7 @@ public class MySQLLegacyController {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public synchronized JobExecution handleFailedExecution(Job job, Long jobExecutionId, Exception exception, Long duration, String jobExecutionLog,
+    public synchronized JobExecution handleFailedExecution(DbJob job, Long jobExecutionId, Exception exception, Long duration, String jobExecutionLog,
                     BaseWorker jobWorker) {
 
         JobExecution failedExecution = entityManager.find(JobExecution.class, jobExecutionId);
@@ -105,7 +105,7 @@ public class MySQLLegacyController {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public synchronized void setJobExecutionFinished(Job job, Long jobExecutionId, Long duration, String jobExecutionLog) {
+    public synchronized void setJobExecutionFinished(DbJob job, Long jobExecutionId, Long duration, String jobExecutionLog) {
         JobExecution.updateStatusFinished(entityManager, WorkhorseUtil.timestamp(), duration, jobExecutionLog, jobExecutionId);
     }
 
@@ -117,7 +117,7 @@ public class MySQLLegacyController {
     public void setJobStatus(Long jobId, JobStatus status) {
 
         // TODO nicht über JPA lösen - Optimistic Lock bei Status aus mehreren Threads möglich - oder darauf reagieren.
-        final Job job = jobEngineService.getJobById(jobId);
+        final DbJob job = jobEngineService.getJobById(jobId);
         if (job != null) {
             job.setStatus(status);
         }

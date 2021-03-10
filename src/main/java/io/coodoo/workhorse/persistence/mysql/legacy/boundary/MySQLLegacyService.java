@@ -3,9 +3,7 @@ package io.coodoo.workhorse.persistence.mysql.legacy.boundary;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -19,13 +17,12 @@ import org.slf4j.LoggerFactory;
 import io.coodoo.framework.listing.boundary.Listing;
 import io.coodoo.framework.listing.boundary.ListingParameters;
 import io.coodoo.framework.listing.boundary.ListingResult;
-import io.coodoo.workhorse.core.control.StaticConfig;
 import io.coodoo.workhorse.core.entity.ExecutionStatus;
 import io.coodoo.workhorse.core.entity.JobStatus;
 import io.coodoo.workhorse.persistence.mysql.legacy.boundary.annotation.JobEngineEntityManager;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.Config;
+import io.coodoo.workhorse.persistence.mysql.legacy.entity.DbJob;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.GroupInfo;
-import io.coodoo.workhorse.persistence.mysql.legacy.entity.Job;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.JobExecution;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.JobExecutionInfo;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.Log;
@@ -90,28 +87,11 @@ public class MySQLLegacyService {
         return entityManager.find(Log.class, id);
     }
 
-    public Log logChange(Long jobId, JobStatus jobStatus, String changeParameter, Object changeOld, Object changeNew, String message) {
-
-        String co = changeOld == null ? "" : changeOld.toString();
-        String cn = changeNew == null ? "" : changeNew.toString();
-
-        if (message == null) {
-            message = String.format(StaticConfig.LOG_CHANGE, changeParameter, co, cn);
-        }
-        return createLog(message, jobId, jobStatus, true, changeParameter, co, cn, null);
-    }
-
-    @Asynchronous
-    public void logException(Exception exception, String message, Long jobId, JobStatus jobStatus) {
-        createLog(message != null ? message : WorkhorseUtil.getMessagesFromException(exception), jobId, jobStatus, false, null, null, null,
-                        WorkhorseUtil.stacktraceToString(exception));
-    }
-
     /**
      * Logs a text message in an own {@link Transaction}
      * 
      * @param message text to log
-     * @param jobId optional: belonging {@link Job}-ID
+     * @param jobId optional: belonging {@link DbJob}-ID
      * @param byUser <code>true</code> if author is a user, <code>false</code> if author is the system
      * @return the resulting log entry
      */
@@ -124,7 +104,7 @@ public class MySQLLegacyService {
      * Logs a text message
      * 
      * @param message text to log
-     * @param jobId optional: belonging {@link Job}-ID
+     * @param jobId optional: belonging {@link DbJob}-ID
      * @param byUser <code>true</code> if author is a user, <code>false</code> if author is the system
      * @return the resulting log entry
      */
@@ -132,7 +112,7 @@ public class MySQLLegacyService {
 
         JobStatus jobStatus = null;
         if (jobId != null) {
-            Job job = getJobById(jobId);
+            DbJob job = getJobById(jobId);
             if (job != null) {
                 jobStatus = job.getStatus();
             }
@@ -165,107 +145,100 @@ public class MySQLLegacyService {
 
     public void activateJob(Long jobId) {
 
-        Job job = getJobById(jobId);
+        DbJob job = getJobById(jobId);
         logger.info("Activate job {}", job.getName());
         updateJobStatus(job.getId(), JobStatus.ACTIVE);
     }
 
     public void deactivateJob(Long jobId) {
 
-        Job job = getJobById(jobId);
+        DbJob job = getJobById(jobId);
         logger.info("Deactivate job {}", job.getName());
         updateJobStatus(job.getId(), JobStatus.INACTIVE);
     }
 
     private void updateJobStatus(Long jobId, JobStatus status) {
 
-        Job job = getJobById(jobId);
-        logChange(jobId, status, "Status", job.getStatus(), status, null);
+        DbJob job = getJobById(jobId);
         job.setStatus(status);
         logger.info("Job status updated to: {}", status);
     }
 
-    public List<Job> getAllJobs() {
-        return Job.getAll(entityManager);
+    public List<DbJob> getAllJobs() {
+        return DbJob.getAll(entityManager);
     }
 
-    public Job getJobById(Long jobId) {
-        return entityManager.find(Job.class, jobId);
+    public List<DbJob> getAllByStatus(JobStatus status) {
+        return DbJob.getAllByStatus(entityManager, status);
+    }
+
+    public DbJob getJobById(Long jobId) {
+        return entityManager.find(DbJob.class, jobId);
+    }
+
+    public Long countAllJobs() {
+        return DbJob.countAll(entityManager);
     }
 
     public Long countJobsByStatus(JobStatus jobStatus) {
-        return Job.countAllByStatus(entityManager, jobStatus);
+        return DbJob.countAllByStatus(entityManager, jobStatus);
     }
 
-    public Job getJobByClassName(String className) {
-        return Job.getByWorkerClassName(entityManager, className);
+    public DbJob getJobByClassName(String className) {
+        return DbJob.getByWorkerClassName(entityManager, className);
     }
 
-    public List<Job> getAllScheduledJobs() {
-        return Job.getAllScheduled(entityManager);
+    public List<DbJob> getAllScheduledJobs() {
+        return DbJob.getAllScheduled(entityManager);
     }
 
-    public Job updateJob(Long jobId, String name, String description, List<String> tags, String workerClassName, String schedule, JobStatus status, int threads,
-                    Integer maxPerMinute, int failRetries, int retryDelay, int daysUntilCleanUp, boolean uniqueInQueue) {
+    public DbJob createJob(String name, String description, List<String> tags, String workerClassName, String parametersClassName, String schedule,
+                    JobStatus status, int threads, Integer maxPerMinute, int failRetries, int retryDelay, int daysUntilCleanUp, boolean uniqueInQueue) {
 
-        Job job = getJobById(jobId);
+        DbJob dbJob = new DbJob();
+        dbJob.setName(name);
+        dbJob.setDescription(description);
+        dbJob.setTags(tags);
+        dbJob.setWorkerClassName(workerClassName);
+        dbJob.setParametersClassName(parametersClassName);
+        dbJob.setSchedule(schedule);
+        dbJob.setStatus(status);
+        dbJob.setThreads(threads);
+        dbJob.setMaxPerMinute(maxPerMinute);
+        dbJob.setFailRetries(failRetries);
+        dbJob.setRetryDelay(retryDelay);
+        dbJob.setDaysUntilCleanUp(daysUntilCleanUp);
+        dbJob.setUniqueInQueue(uniqueInQueue);
 
-        if (!Objects.equals(job.getName(), name)) {
-            logChange(jobId, status, "Name", job.getName(), name, null);
-            job.setName(name);
-        }
-        if (!Objects.equals(job.getDescription(), description)) {
-            logChange(jobId, status, "Description", job.getDescription(), description, null);
-            job.setDescription(description);
-        }
-        if (!Objects.equals(job.getTags(), tags)) {
-            logChange(jobId, status, "Tags", job.getTags(), tags, null);
-            job.setTags(tags);
-        }
-        if (!Objects.equals(job.getWorkerClassName(), workerClassName)) {
-            logChange(jobId, status, "JobWorker class name", job.getWorkerClassName(), workerClassName, null);
-            job.setWorkerClassName(workerClassName);
-        }
-        if (!Objects.equals(job.getSchedule(), schedule)) {
-            logChange(jobId, status, "Schedule", job.getSchedule(), schedule, null);
-            job.setSchedule(schedule);
-        }
-        if (!Objects.equals(job.getStatus(), status)) {
-            logChange(jobId, status, "Status", job.getStatus(), status.name(), null);
-            job.setStatus(status);
-        }
-        if (!Objects.equals(job.getThreads(), threads)) {
-            logChange(jobId, status, "Threads", job.getThreads(), threads, null);
-            job.setThreads(threads);
-        }
-        if (!Objects.equals(job.getMaxPerMinute(), maxPerMinute)) {
-            logChange(jobId, status, "Max executions per minute", job.getMaxPerMinute(), maxPerMinute, null);
-            job.setMaxPerMinute(maxPerMinute);
-        }
-        if (!Objects.equals(job.getFailRetries(), failRetries)) {
-            logChange(jobId, status, "Fail retries", job.getFailRetries(), failRetries, null);
-            job.setFailRetries(failRetries);
-        }
-        if (!Objects.equals(job.getRetryDelay(), retryDelay)) {
-            logChange(jobId, status, "Retry delay", job.getRetryDelay(), retryDelay, null);
-            job.setRetryDelay(retryDelay);
-        }
-        if (!Objects.equals(job.getDaysUntilCleanUp(), daysUntilCleanUp)) {
-            logChange(jobId, status, "Days until cleanup", job.getDaysUntilCleanUp(), daysUntilCleanUp, null);
-            job.setDaysUntilCleanUp(daysUntilCleanUp);
-        }
-        if (!Objects.equals(job.isUniqueInQueue(), uniqueInQueue)) {
-            logChange(jobId, status, "Unique in queue", job.isUniqueInQueue(), uniqueInQueue, null);
-            job.setUniqueInQueue(uniqueInQueue);
-        }
+        entityManager.persist(dbJob);
 
-        logger.info("Job updated: {}", job);
-        return job;
+        return dbJob;
+    }
+
+    public DbJob updateJob(Long jobId, String name, String description, List<String> tags, String workerClassName, String schedule, JobStatus status,
+                    int threads, Integer maxPerMinute, int failRetries, int retryDelay, int daysUntilCleanUp, boolean uniqueInQueue) {
+
+        DbJob dbJob = getJobById(jobId);
+        dbJob.setName(name);
+        dbJob.setDescription(description);
+        dbJob.setTags(tags);
+        dbJob.setWorkerClassName(workerClassName);
+        dbJob.setSchedule(schedule);
+        dbJob.setStatus(status);
+        dbJob.setThreads(threads);
+        dbJob.setMaxPerMinute(maxPerMinute);
+        dbJob.setFailRetries(failRetries);
+        dbJob.setRetryDelay(retryDelay);
+        dbJob.setDaysUntilCleanUp(daysUntilCleanUp);
+        dbJob.setUniqueInQueue(uniqueInQueue);
+
+        logger.info("Job updated: {}", dbJob);
+        return dbJob;
     }
 
     public void deleteJob(Long jobId) {
 
-        Job job = getJobById(jobId);
+        DbJob job = getJobById(jobId);
 
         int deletedJobExecutions = JobExecution.deleteAllByJobId(entityManager, jobId);
         int deletedJobLogs = deleteAllByJobId(jobId);
@@ -454,12 +427,12 @@ public class MySQLLegacyService {
      */
     public List<LocalDateTime> getNextScheduledTimes(Long jobId, int times, LocalDateTime startTime) {
 
-        Job job = getJobById(jobId);
+        DbJob job = getJobById(jobId);
         return getNextScheduledTimes(job.getSchedule(), times, startTime);
     }
 
     /**
-     * Get the next execution times defined by {@link Job#getSchedule()}
+     * Get the next execution times defined by {@link DbJob#getSchedule()}
      * 
      * @param schedule CRON Expression
      * @param times amount of future execution times
@@ -493,12 +466,12 @@ public class MySQLLegacyService {
      */
     public List<LocalDateTime> getScheduledTimes(Long jobId, LocalDateTime startTime, LocalDateTime endTime) {
 
-        Job job = getJobById(jobId);
+        DbJob job = getJobById(jobId);
         return getScheduledTimes(job.getSchedule(), startTime, endTime);
     }
 
     /**
-     * Get the execution times defined by {@link Job#getSchedule()}
+     * Get the execution times defined by {@link DbJob#getSchedule()}
      * 
      * @param schedule CRON Expression
      * @param startTime start time for this request (if <tt>null</tt> then current time is used)

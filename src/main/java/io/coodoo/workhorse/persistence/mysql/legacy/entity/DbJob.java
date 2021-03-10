@@ -29,11 +29,12 @@ import io.coodoo.workhorse.core.entity.JobStatus;
                 @NamedQuery(name = "Job.getByName", query = "SELECT job FROM Job job WHERE job.name=:name"),
                 @NamedQuery(name = "Job.getByWorkerClassName", query = "SELECT job FROM Job job WHERE job.workerClassName=:workerClassName"),
                 @NamedQuery(name = "Job.getAllByStatus", query = "SELECT job FROM Job job WHERE job.status=:status"),
+                @NamedQuery(name = "Job.countAll", query = "SELECT COUNT(job) FROM Job job"),
                 @NamedQuery(name = "Job.countAllByStatus", query = "SELECT COUNT(job) FROM Job job WHERE job.status=:status"),
                 @NamedQuery(name = "Job.getAllScheduled", query = "SELECT job FROM Job job WHERE job.schedule IS NOT NULL")
 
 })
-public class Job extends AbstractIdOccCreatedUpdatedAtEntity {
+public class DbJob extends AbstractIdOccCreatedUpdatedAtEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -231,7 +232,7 @@ public class Job extends AbstractIdOccCreatedUpdatedAtEntity {
      * @return List of result objects
      */
     @SuppressWarnings("unchecked")
-    public static List<Job> getAllByStatus(EntityManager entityManager, JobStatus status) {
+    public static List<DbJob> getAllByStatus(EntityManager entityManager, JobStatus status) {
         Query query = entityManager.createNamedQuery("Job.getAllByStatus");
         query = query.setParameter("status", status);
         return query.getResultList();
@@ -244,7 +245,7 @@ public class Job extends AbstractIdOccCreatedUpdatedAtEntity {
      * @param name the name
      * @return the result
      */
-    public static Job getByName(EntityManager entityManager, String name) {
+    public static DbJob getByName(EntityManager entityManager, String name) {
         Query query = entityManager.createNamedQuery("Job.getByName");
         query = query.setParameter("name", name);
         query = query.setMaxResults(1);
@@ -253,7 +254,7 @@ public class Job extends AbstractIdOccCreatedUpdatedAtEntity {
         if (results.isEmpty()) {
             return null;
         }
-        return (Job) results.get(0);
+        return (DbJob) results.get(0);
     }
 
     /**
@@ -263,7 +264,7 @@ public class Job extends AbstractIdOccCreatedUpdatedAtEntity {
      * @param workerClassName the workerClassName
      * @return the result
      */
-    public static Job getByWorkerClassName(EntityManager entityManager, String workerClassName) {
+    public static DbJob getByWorkerClassName(EntityManager entityManager, String workerClassName) {
         Query query = entityManager.createNamedQuery("Job.getByWorkerClassName");
         query = query.setParameter("workerClassName", workerClassName);
         query = query.setMaxResults(1);
@@ -272,7 +273,7 @@ public class Job extends AbstractIdOccCreatedUpdatedAtEntity {
         if (results.isEmpty()) {
             return null;
         }
-        return (Job) results.get(0);
+        return (DbJob) results.get(0);
     }
 
     /**
@@ -282,7 +283,7 @@ public class Job extends AbstractIdOccCreatedUpdatedAtEntity {
      * @return List of result objects
      */
     @SuppressWarnings("unchecked")
-    public static List<Job> getAll(EntityManager entityManager) {
+    public static List<DbJob> getAll(EntityManager entityManager) {
         Query query = entityManager.createNamedQuery("Job.getAll");
         return query.getResultList();
     }
@@ -313,9 +314,26 @@ public class Job extends AbstractIdOccCreatedUpdatedAtEntity {
      * @return List of result objects
      */
     @SuppressWarnings("unchecked")
-    public static List<Job> getAllScheduled(EntityManager entityManager) {
+    public static List<DbJob> getAllScheduled(EntityManager entityManager) {
         Query query = entityManager.createNamedQuery("Job.getAllScheduled");
         return query.getResultList();
+    }
+
+    /**
+     * Executes the query 'Job.countAll' returning one/the first object or null if nothing has been found.
+     *
+     * @param entityManager the entityManager
+     * @return the result
+     */
+    public static Long countAll(EntityManager entityManager) {
+        Query query = entityManager.createNamedQuery("Job.countAll");
+        query = query.setMaxResults(1);
+        @SuppressWarnings("rawtypes")
+        List results = query.getResultList();
+        if (results.isEmpty()) {
+            return null;
+        }
+        return (Long) results.get(0);
     }
 
 }
