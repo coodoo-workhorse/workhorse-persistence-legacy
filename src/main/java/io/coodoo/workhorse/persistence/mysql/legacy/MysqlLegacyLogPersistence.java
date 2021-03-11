@@ -31,6 +31,9 @@ public class MysqlLegacyLogPersistence implements LogPersistence {
     }
 
     private WorkhorseLog map(LegacyLog log) {
+        if (log == null) {
+            return null;
+        }
         WorkhorseLog workhorseLog = new WorkhorseLog();
         workhorseLog.setId(log.getId());
         workhorseLog.setMessage(log.getMessage());

@@ -31,23 +31,26 @@ public class MysqlLegacyJobPersistence implements JobPersistence {
         return map(mysqlLegacyController.getJobById(jobId));
     }
 
-    private Job map(LegacyJob dbJob) {
+    private Job map(LegacyJob legacyJob) {
+        if (legacyJob == null) {
+            return null;
+        }
         Job job = new Job();
-        job.setId(dbJob.getId());
-        job.setName(dbJob.getName());
-        job.setDescription(dbJob.getDescription());
-        job.setWorkerClassName(dbJob.getWorkerClassName());
-        job.setParametersClassName(dbJob.getParametersClassName());
-        job.setStatus(dbJob.getStatus());
-        job.setThreads(dbJob.getThreads());
-        job.setMaxPerMinute(dbJob.getMaxPerMinute());
-        job.setFailRetries(dbJob.getFailRetries());
-        job.setRetryDelay(dbJob.getRetryDelay());
-        job.setMinutesUntilCleanUp(dbJob.getDaysUntilCleanUp() / 24 / 60);
-        job.setUniqueQueued(dbJob.isUniqueInQueue());
-        job.setSchedule(dbJob.getSchedule());
-        job.setCreatedAt(dbJob.getCreatedAt());
-        job.setUpdatedAt(dbJob.getUpdatedAt());
+        job.setId(legacyJob.getId());
+        job.setName(legacyJob.getName());
+        job.setDescription(legacyJob.getDescription());
+        job.setWorkerClassName(legacyJob.getWorkerClassName());
+        job.setParametersClassName(legacyJob.getParametersClassName());
+        job.setStatus(legacyJob.getStatus());
+        job.setThreads(legacyJob.getThreads());
+        job.setMaxPerMinute(legacyJob.getMaxPerMinute());
+        job.setFailRetries(legacyJob.getFailRetries());
+        job.setRetryDelay(legacyJob.getRetryDelay());
+        job.setMinutesUntilCleanUp(legacyJob.getDaysUntilCleanUp() / 24 / 60);
+        job.setUniqueQueued(legacyJob.isUniqueInQueue());
+        job.setSchedule(legacyJob.getSchedule());
+        job.setCreatedAt(legacyJob.getCreatedAt());
+        job.setUpdatedAt(legacyJob.getUpdatedAt());
         return job;
     }
 

@@ -27,6 +27,9 @@ public class MysqlLegacyConfigPersistence implements ConfigPersistence {
     }
 
     private WorkhorseConfig mapConfig(LegacyConfig config) {
+        if (config == null) {
+            return null;
+        }
         WorkhorseConfig workhorseConfig = new MysqlLegacyConfig();
         workhorseConfig.setTimeZone(config.getTimeZone());
         workhorseConfig.setBufferMax(config.getJobQueueMax());
@@ -50,10 +53,10 @@ public class MysqlLegacyConfigPersistence implements ConfigPersistence {
                             + MysqlLegacyConfig.MINUTES_UNTIL_CLEANUP + " minutes)");
         }
 
-        LegacyConfig config = mysqlLegacyController.updateConfig(workhorseConfig.getTimeZone(), workhorseConfig.getBufferPollInterval(), workhorseConfig.getBufferMax(),
-                        workhorseConfig.getBufferMin(), workhorseConfig.getExecutionTimeout(), workhorseConfig.getExecutionTimeoutStatus(), 0, 0,
-                        workhorseConfig.getLogChange(), workhorseConfig.getLogTimeFormat(), workhorseConfig.getLogInfoMarker(),
-                        workhorseConfig.getLogWarnMarker(), workhorseConfig.getLogErrorMarker());
+        LegacyConfig config = mysqlLegacyController.updateConfig(workhorseConfig.getTimeZone(), workhorseConfig.getBufferPollInterval(),
+                        workhorseConfig.getBufferMax(), workhorseConfig.getBufferMin(), workhorseConfig.getExecutionTimeout(),
+                        workhorseConfig.getExecutionTimeoutStatus(), 0, 0, workhorseConfig.getLogChange(), workhorseConfig.getLogTimeFormat(),
+                        workhorseConfig.getLogInfoMarker(), workhorseConfig.getLogWarnMarker(), workhorseConfig.getLogErrorMarker());
 
         return mapConfig(config);
     }

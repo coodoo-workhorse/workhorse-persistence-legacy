@@ -35,6 +35,9 @@ public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
     }
 
     private Execution map(LegacyExecution jobExecution) {
+        if (jobExecution == null) {
+            return null;
+        }
         Execution execution = new Execution();
         execution.setId(jobExecution.getId());
         execution.setJobId(jobExecution.getJobId());
@@ -176,7 +179,9 @@ public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
     public ExecutionLog getLog(Long jobId, Long executionId) {
 
         LegacyExecution jobExecution = mysqlLegacyController.getJobExecutionById(executionId);
-
+        if (jobExecution == null) {
+            return null;
+        }
         ExecutionLog executionLog = new ExecutionLog();
         executionLog.setId(jobExecution.getId());
         executionLog.setExecutionId(jobExecution.getId());
