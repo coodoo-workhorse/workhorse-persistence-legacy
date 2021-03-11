@@ -21,8 +21,8 @@ import io.coodoo.workhorse.core.entity.ExecutionStatus;
 import io.coodoo.workhorse.core.entity.JobStatus;
 import io.coodoo.workhorse.persistence.mysql.legacy.boundary.JobEngineEntityManager;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyConfig;
-import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyJob;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyExecution;
+import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyJob;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyLog;
 import io.coodoo.workhorse.util.WorkhorseUtil;
 
@@ -76,10 +76,6 @@ public class MysqlLegacyController {
 
     public ListingResult<LegacyExecution> listExecutions(ListingParameters listingParameters) {
         return Listing.getListingResult(entityManager, LegacyExecution.class, listingParameters);
-    }
-
-    public Long countExecutions(ListingParameters listingParameters) {
-        return Listing.countListing(entityManager, LegacyExecution.class, listingParameters);
     }
 
     public ListingResult<LegacyJob> listJobs(ListingParameters listingParameters) {
@@ -243,7 +239,6 @@ public class MysqlLegacyController {
 
         String logMessage = String.format("Job removed (including %d executions and %d logs): %s", deletedJobExecutions, deletedJobLogs, job.toString());
         logger.info(logMessage);
-        logMessage(logMessage, null, true);
     }
 
     public LegacyExecution getJobExecutionById(Long jobExecutionId) {

@@ -126,6 +126,11 @@ public class MysqlLegacyJobPersistence implements JobPersistence {
     }
 
     @Override
+    public void deleteJob(Long jobId) {
+        mysqlLegacyController.deleteJob(jobId);
+    }
+
+    @Override
     public void connect(Object... params) {
         // TODO ?!
     }
