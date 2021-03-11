@@ -32,9 +32,9 @@ import io.coodoo.workhorse.util.WorkhorseUtil;
  * @author coodoo GmbH (coodoo.io)
  */
 @Stateless
-public class MySQLLegacyController {
+public class MysqlLegacyController {
 
-    private final Logger logger = LoggerFactory.getLogger(MySQLLegacyController.class);
+    private final Logger logger = LoggerFactory.getLogger(MysqlLegacyController.class);
 
     @Inject
     @JobEngineEntityManager

@@ -5,8 +5,8 @@ import javax.inject.Inject;
 
 import io.coodoo.workhorse.core.entity.WorkhorseConfig;
 import io.coodoo.workhorse.persistence.interfaces.ConfigPersistence;
-import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MySQLLegacyConfig;
-import io.coodoo.workhorse.persistence.mysql.legacy.control.MySQLLegacyController;
+import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MysqlLegacyConfig;
+import io.coodoo.workhorse.persistence.mysql.legacy.control.MysqlLegacyController;
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyConfig;
 
 /**
@@ -18,22 +18,22 @@ import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyConfig;
 public class MysqlLegacyConfigPersistence implements ConfigPersistence {
 
     @Inject
-    MySQLLegacyController mySQLLegacyController;
+    MysqlLegacyController mysqlLegacyController;
 
     @Override
     public WorkhorseConfig get() {
-        LegacyConfig config = mySQLLegacyController.getConfig();
+        LegacyConfig config = mysqlLegacyController.getConfig();
         return mapConfig(config);
     }
 
     private WorkhorseConfig mapConfig(LegacyConfig config) {
-        WorkhorseConfig workhorseConfig = new MySQLLegacyConfig();
+        WorkhorseConfig workhorseConfig = new MysqlLegacyConfig();
         workhorseConfig.setTimeZone(config.getTimeZone());
         workhorseConfig.setBufferMax(config.getJobQueueMax());
         workhorseConfig.setBufferMin(config.getJobQueueMin());
         workhorseConfig.setBufferPollInterval(config.getJobQueuePollerInterval());
         workhorseConfig.setBufferPushFallbackPollInterval(config.getJobQueuePollerInterval());
-        workhorseConfig.setMinutesUntilCleanup(MySQLLegacyConfig.MINUTES_UNTIL_CLEANUP);
+        workhorseConfig.setMinutesUntilCleanup(MysqlLegacyConfig.MINUTES_UNTIL_CLEANUP);
         workhorseConfig.setLogChange(config.getLogChange());
         workhorseConfig.setLogTimeFormat(config.getLogTimeFormatter());
         workhorseConfig.setLogInfoMarker(config.getLogInfoMarker());
@@ -45,12 +45,12 @@ public class MysqlLegacyConfigPersistence implements ConfigPersistence {
     @Override
     public WorkhorseConfig update(WorkhorseConfig workhorseConfig) {
 
-        if (workhorseConfig.getMinutesUntilCleanup() != MySQLLegacyConfig.MINUTES_UNTIL_CLEANUP) {
-            throw new RuntimeException("The " + MySQLLegacyConfig.NAME + " persistence can not change the minutes until cleanup default value of 30 days ("
-                            + MySQLLegacyConfig.MINUTES_UNTIL_CLEANUP + " minutes)");
+        if (workhorseConfig.getMinutesUntilCleanup() != MysqlLegacyConfig.MINUTES_UNTIL_CLEANUP) {
+            throw new RuntimeException("The " + MysqlLegacyConfig.NAME + " persistence can not change the minutes until cleanup default value of 30 days ("
+                            + MysqlLegacyConfig.MINUTES_UNTIL_CLEANUP + " minutes)");
         }
 
-        LegacyConfig config = mySQLLegacyController.updateConfig(workhorseConfig.getTimeZone(), workhorseConfig.getBufferPollInterval(), workhorseConfig.getBufferMax(),
+        LegacyConfig config = mysqlLegacyController.updateConfig(workhorseConfig.getTimeZone(), workhorseConfig.getBufferPollInterval(), workhorseConfig.getBufferMax(),
                         workhorseConfig.getBufferMin(), workhorseConfig.getExecutionTimeout(), workhorseConfig.getExecutionTimeoutStatus(), 0, 0,
                         workhorseConfig.getLogChange(), workhorseConfig.getLogTimeFormat(), workhorseConfig.getLogInfoMarker(),
                         workhorseConfig.getLogWarnMarker(), workhorseConfig.getLogErrorMarker());
@@ -65,7 +65,7 @@ public class MysqlLegacyConfigPersistence implements ConfigPersistence {
 
     @Override
     public String getPersistenceName() {
-        return MySQLLegacyConfig.NAME;
+        return MysqlLegacyConfig.NAME;
     }
 
 }

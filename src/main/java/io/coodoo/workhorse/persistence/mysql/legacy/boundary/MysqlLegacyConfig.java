@@ -9,9 +9,9 @@ import io.coodoo.workhorse.core.entity.WorkhorseConfig;
 /**
  * @author coodoo GmbH (coodoo.io)
  */
-public class MySQLLegacyConfig extends WorkhorseConfig {
+public class MysqlLegacyConfig extends WorkhorseConfig {
 
-    public static final String NAME = "MySQLLegacy";
+    public static final String NAME = "MySQL Legacy";
 
     /**
      * ZoneId Object time zone for LocalDateTime instance creation. Default is UTC
@@ -82,7 +82,7 @@ public class MySQLLegacyConfig extends WorkhorseConfig {
 
     public static final Long MINUTES_UNTIL_CLEANUP = 30l * 24l * 60l;
 
-    public MySQLLegacyConfig() {
+    public MysqlLegacyConfig() {
 
         timeZone = "UTC";
         bufferMax = JOB_QUEUE_MAX;
