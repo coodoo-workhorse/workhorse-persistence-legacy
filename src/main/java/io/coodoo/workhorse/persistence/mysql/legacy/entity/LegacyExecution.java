@@ -46,27 +46,27 @@ import io.coodoo.workhorse.util.WorkhorseUtil;
                 @NamedQuery(name = "JobExecution.countBatchByStatus",
                                 query = "SELECT COUNT(j) FROM LegacyExecution j WHERE j.batchId = :batchId AND j.status = :status"),
                 @NamedQuery(name = "JobExecution.abortBatch",
-                                query = "UPDATE JobExecution j SET j.status = 'ABORTED' WHERE j.batchId = :batchId AND j.status = 'QUEUED'"),
+                                query = "UPDATE LegacyExecution j SET j.status = 'ABORTED' WHERE j.batchId = :batchId AND j.status = 'QUEUED'"),
 
                 // Chained
                 @NamedQuery(name = "JobExecution.getChain", query = "SELECT j FROM LegacyExecution j WHERE j.chainId = :chainId ORDER BY j.createdAt, j.id"),
                 @NamedQuery(name = "JobExecution.getNextInChain",
                                 query = "SELECT j FROM LegacyExecution j WHERE j.chainId = :chainId AND j.chainPreviousExecutionId = :jobExecutionId"),
                 @NamedQuery(name = "JobExecution.abortChain",
-                                query = "UPDATE JobExecution j SET j.status = 'ABORTED' WHERE j.chainId = :chainId AND j.status = 'QUEUED'"),
+                                query = "UPDATE LegacyExecution j SET j.status = 'ABORTED' WHERE j.chainId = :chainId AND j.status = 'QUEUED'"),
 
                 // Misc
                 @NamedQuery(name = "JobExecution.deleteOlderJobExecutions",
                                 query = "DELETE FROM LegacyExecution j WHERE j.jobId = :jobId AND j.createdAt < :preDate"),
                 @NamedQuery(name = "JobExecution.selectDuration", query = "SELECT j.duration FROM LegacyExecution j WHERE j.id = :jobExecutionId"),
                 @NamedQuery(name = "JobExecution.findZombies",
-                                query = "SELECT j FROM LegacyExecution j WHERE j.startedAt < :time AND j.status = io.coodoo.workhorse.jobengine.entity.ExecutionStatus.RUNNING"),
+                                query = "SELECT j FROM LegacyExecution j WHERE j.startedAt < :time AND j.status = io.coodoo.workhorse.core.entity.ExecutionStatus.RUNNING"),
 
                 // Status
                 @NamedQuery(name = "JobExecution.updateStatusRunning",
-                                query = "UPDATE JobExecution j SET j.status = 'RUNNING', j.startedAt = :startedAt, j.updatedAt = :startedAt WHERE j.id = :jobExecutionId"),
+                                query = "UPDATE LegacyExecution j SET j.status = 'RUNNING', j.startedAt = :startedAt, j.updatedAt = :startedAt WHERE j.id = :jobExecutionId"),
                 @NamedQuery(name = "JobExecution.updateStatusFinished",
-                                query = "UPDATE JobExecution j SET j.status = 'FINISHED', j.endedAt = :endedAt, j.duration = :duration, j.log = :log, j.updatedAt = :endedAt WHERE j.id = :jobExecutionId"),
+                                query = "UPDATE LegacyExecution j SET j.status = 'FINISHED', j.endedAt = :endedAt, j.duration = :duration, j.log = :log, j.updatedAt = :endedAt WHERE j.id = :jobExecutionId"),
 
                 // Analytic
                 @NamedQuery(name = "JobExecution.getFirstCreatedByJobIdAndParametersHash",
