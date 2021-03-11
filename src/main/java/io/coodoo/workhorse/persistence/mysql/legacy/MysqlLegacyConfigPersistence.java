@@ -10,7 +10,7 @@ import io.coodoo.workhorse.persistence.mysql.legacy.control.MysqlLegacyControlle
 import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyConfig;
 
 /**
- * Legacy support for the MySQL Persistence of Workhorse version 1.5
+ * Legacy support for the MySQL Persistence of Workhorse version 1.5.
  * 
  * @author coodoo GmbH (coodoo.io)
  */
