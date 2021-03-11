@@ -285,13 +285,13 @@ public class MysqlLegacyController {
     }
 
     public void appendExecutionLog(Long jobId, Long executionId, String log) {
-        String query = "UPDATE jobengine_execution SET log = CONCAT(IFNULL(log, ''), '" + log + "') WHERE id = " + executionId;
-        entityManager.createNativeQuery(query).executeUpdate();
+        String query = "UPDATE jobengine_execution SET log = CONCAT(IFNULL(log, ''), :log) WHERE id = " + executionId;
+        entityManager.createNativeQuery(query).setParameter("log", log).executeUpdate();
     }
 
     public void appendExecutionFailure(Long jobId, Long executionId, String error, String stacktrace) {
-        String query = "UPDATE jobengine_execution SET fail_message = '" + error + "', fail_stacktrace = '" + stacktrace + "'  WHERE id = " + executionId;
-        entityManager.createNativeQuery(query).executeUpdate();
+        String query = "UPDATE jobengine_execution SET fail_message = :error, fail_stacktrace = :stacktrace WHERE id = " + executionId;
+        entityManager.createNativeQuery(query).setParameter("error", error).setParameter("stacktrace", stacktrace).executeUpdate();
     }
 
     /**
