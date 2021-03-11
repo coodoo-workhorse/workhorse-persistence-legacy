@@ -70,11 +70,12 @@ public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
     }
 
     @Override
-    public io.coodoo.workhorse.persistence.interfaces.listing.ListingResult<Execution> getExecutionListing(
+    public io.coodoo.workhorse.persistence.interfaces.listing.ListingResult<Execution> getExecutionListing(Long jobId,
                     io.coodoo.workhorse.persistence.interfaces.listing.ListingParameters listingParameters) {
 
         ListingParameters params = new ListingParameters(listingParameters.getPage(), listingParameters.getLimit(), listingParameters.getSortAttribute());
         params.setFilterAttributes(listingParameters.getFilterAttributes());
+        params.addFilterAttributes("jobId", jobId.toString());
         params.setFilter(listingParameters.getFilter());
 
         io.coodoo.framework.listing.boundary.ListingResult<LegacyExecution> result = mysqlLegacyController.listExecutions(params);
@@ -89,11 +90,6 @@ public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
     @Override
     public List<Execution> pollNextExecutions(Long jobId, int limit) {
         return mysqlLegacyController.getNextCandidates(jobId).stream().map(e -> map(e)).collect(Collectors.toList());
-    }
-
-    @Override
-    public Long count() {
-        return mysqlLegacyController.countExecutions(new ListingParameters());
     }
 
     @Override
@@ -131,28 +127,6 @@ public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
     @Override
     public List<Execution> getChain(Long jobId, Long chainId) {
         return mysqlLegacyController.getJobExecutionChain(chainId).stream().map(e -> map(e)).collect(Collectors.toList());
-    }
-
-    @Override
-    public Execution getQueuedBatchExecution(Long jobId, Long batchId) {
-
-        LegacyExecution jobExecution = mysqlLegacyController.getJobExecutionById(batchId);
-
-        if (jobExecution != null && (jobExecution.getStatus() == ExecutionStatus.QUEUED || jobExecution.getStatus() == ExecutionStatus.PLANNED)) {
-            return map(jobExecution);
-        }
-        return null;
-    }
-
-    @Override
-    public List<Execution> getFailedBatchExecutions(Long jobId, Long batchId) {
-
-        ListingParameters listingParameters = new ListingParameters(0);
-        listingParameters.addFilterAttributes("jobId", jobId.toString());
-        listingParameters.addFilterAttributes("batchId", batchId.toString());
-        listingParameters.addFilterAttributes("status", ExecutionStatus.FAILED.toString());
-
-        return mysqlLegacyController.listExecutions(listingParameters).getResults().stream().map(e -> map(e)).collect(Collectors.toList());
     }
 
     @Override
