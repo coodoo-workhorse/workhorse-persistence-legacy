@@ -48,7 +48,7 @@ build:
   tags:
     - Java
   script:
-    - mvn $MAVEN_CLI_OPTS dependency:get -Dartifact=io.coodoo:workhorse:2.0.0-RC1-SNAPSHOT -s ci_settings.xml
+    - mvn $MAVEN_CLI_OPTS dependency:get -Dartifact=io.coodoo:workhorse:2.0.0-RC1-20210312-SNAPSHOT -s ci_settings.xml
     - mvn $MAVEN_CLI_OPTS clean compile
 
 test:
@@ -56,7 +56,7 @@ test:
   tags:
     - Java
   script:
-    - mvn $MAVEN_CLI_OPTS dependency:get -Dartifact=io.coodoo:workhorse:2.0.0-RC1-SNAPSHOT -s ci_settings.xml
+    - mvn $MAVEN_CLI_OPTS dependency:get -Dartifact=io.coodoo:workhorse:2.0.0-RC1-20210312-SNAPSHOT -s ci_settings.xml
     - mvn $MAVEN_CLI_OPTS test
   artifacts:
     reports:
@@ -68,7 +68,7 @@ deploy:
   tags:
     - Java
   script:
-    - mvn $MAVEN_CLI_OPTS dependency:get -Dartifact=io.coodoo:workhorse:2.0.0-RC1-SNAPSHOT -s ci_settings.xml
+    - mvn $MAVEN_CLI_OPTS dependency:get -Dartifact=io.coodoo:workhorse:2.0.0-RC1-20210312-SNAPSHOT -s ci_settings.xml
     - mvn $MAVEN_CLI_OPTS deploy -s ci_settings.xml
   only:
     - master
