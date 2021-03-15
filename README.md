@@ -20,34 +20,11 @@
 Before you begin, ensure you have met the following requirements:
 * You have installed at least [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 * You have [Maven](https://maven.apache.org/download.cgi) running on your system
-  
-## Get Workhorse
-  
-Please create a [gitLab token](https://gitlab.coodoo.io/profile/personal_access_tokens) and store it in the settings.xml of your local maven repository as follows:
-
-```
-<server>
-	<id>gitlab-maven</id>
-		<configuration>
-			<httpHeaders>
-				<property>
-					<name>Private-Token</name>
-					<value>ENTER_YOUR_PRIVATE_TOKEN_HERE</value>
-				</property>
-		</httpHeaders>
-	</configuration>
-</server>
-```
-
-Run command :
-
-```
-mvn dependency:get -Dartifact=io.coodoo:workhorse:2.0.0-RC1-SNAPSHOT
-```
+ 
 
 ## Install
 
-1. Add the following dependency to your project ([published on Maven Central](http://search.maven.org/#artifactdetails%7Cio.coodoo%7Cworkhorse%7C1.5.0%7Cjar))
+1. Add the following dependency to your project ([published on Maven Central](https://search.maven.org/artifact/io.coodoo/workhorse-persistence-mysql-legacy/))
    
    ```xml
    <dependency>
@@ -97,8 +74,7 @@ After the [installation](#install) all you need is to create an `MysqlLegacyConf
 @Inject
 WorkhorseService workhorseService;
 
-public void start() {
-
+public void startWithMysqlLegacyPersistence() {
     MysqlLegacyConfig mysqlLegacyConfig = new MysqlLegacyConfigBuilder().build();
     workhorseService.start(mysqlLegacyConfig);
 }
