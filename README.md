@@ -44,20 +44,68 @@ Run command :
 ```
 mvn dependency:get -Dartifact=io.coodoo:workhorse:2.0.0-RC1-SNAPSHOT
 ```
+
 ## Install
 
-Create the WAR file
+1. Add the following dependency to your project ([published on Maven Central](http://search.maven.org/#artifactdetails%7Cio.coodoo%7Cworkhorse%7C1.5.0%7Cjar))
+   
+   ```xml
+   <dependency>
+       <groupId>io.coodoo</groupId>
+       <artifactId>workhorse-persistence-mysql-legacy</artifactId>
+       <version>2.0.0-RC1-SNAPSHOT</version>
+   </dependency>
+   ```
+   
+2. Create the database tables and add the JPA entities to your persistence.xml
+   
+   You can find a SQL script to create the tables [here](./src/main/resources/mysql-schema.sql).
+   
+   ```xml
+	<class>io.coodoo.workhorse.jobengine.entity.Job</class>
+	<class>io.coodoo.workhorse.jobengine.entity.JobExecution</class>
+	<class>io.coodoo.workhorse.config.entity.Config</class>
+	<class>io.coodoo.workhorse.log.entity.Log</class>
+	<class>io.coodoo.workhorse.api.entity.LogView</class>
+	<class>io.coodoo.workhorse.api.entity.JobExecutionView</class>
+   ```
+3. To provide the EntityManager you have to implement a `@JobEngineEntityManagerProducer` CDI producer.
 
-```
-mvn clean package
-```
+   ```java
+    @Stateless
+    public class JobEngineEntityManagerProducer {
+    
+        @PersistenceContext
+        private EntityManager entityManager;
+    
+        @Produces
+        @JobEngineEntityManager
+        public EntityManager getEntityManager() {
+            return entityManager;
+        }
+    }
+    ```
+    *This is necessary to avoid trouble when it comes to different persistence contexts.*
 
-It will appear in `/workhorse-persistence-mysql-legacy/target/workhorse-persistence-mysql-legacy.war`
 
 
 ## Getting started
 
-Drop the WAR into your autodeploy folder `/wildfly/standalone/deployments/`
+After the [installation](#install) all you need is to create an `MysqlLegacyConfig` instance an pass it to the `start()` method of the `WorkhorseService`.
+
+```java
+@Inject
+WorkhorseService workhorseService;
+
+public void start() {
+
+    MysqlLegacyConfig mysqlLegacyConfig = new MysqlLegacyConfigBuilder().build();
+    workhorseService.start(mysqlLegacyConfig);
+}
+```
+
+If you are using this persistence, you should already have your configuration provided in your MySQL database. Otherwise you can pass the configuration you want using the builder on `MysqlLegacyConfig`.
+
 
 
 ## Changelog
