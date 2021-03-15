@@ -6,7 +6,6 @@
 <img align="right" height="200px" src="logo.png">
 
 - [Prerequisites](#prerequisites)
-- [Get Workhorse](#get-workhorse)
 - [Install](#install)
 - [Getting started](#getting-started)
 - [Maintainers](#maintainers)
