@@ -83,6 +83,18 @@ If you are using this persistence, you should already have your configuration pr
 
 
 
+## MySQL database via Docker
+
+You can spawn a MySQL 8 Server with the [legacy data structure](./src/main/resources/mysql-schema.sql) using Docker:
+
+```bash
+docker-compose up db
+```
+
+The schema name is `workhorse`, so is the username and password. You can see and change these settings in [docker-compose.yml](./docker-compose.yml).
+
+
+
 ## Changelog
 
 All release changes can be viewed on our [changelog](./CHANGELOG.md).

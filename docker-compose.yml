@@ -1,0 +1,15 @@
+version: "3"
+services:
+  db:
+    container_name: "workhorse-persistence-mysql-legacy"
+    image: mysql:8
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: workhorse
+      MYSQL_USER: workhorse
+      MYSQL_PASSWORD: workhorse
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./src/main/resources/mysql-schema.sql:/docker-entrypoint-initdb.d/init.sql
