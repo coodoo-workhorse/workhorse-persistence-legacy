@@ -285,6 +285,7 @@ public class MysqlLegacyController {
     }
 
     public void appendExecutionLog(Long jobId, Long executionId, String log) {
+        log = log + System.lineSeparator();
         String query = "UPDATE jobengine_execution SET log = CONCAT(IFNULL(log, ''), :log) WHERE id = " + executionId;
         entityManager.createNativeQuery(query).setParameter("log", log).executeUpdate();
     }
@@ -317,7 +318,7 @@ public class MysqlLegacyController {
     }
 
     public LegacyExecution createJobExecution(Long jobId, ExecutionStatus status, boolean priority, LocalDateTime maturity, Long batchId, Long chainId,
-                    String parameters, Integer parametersHash) {
+                    String parameters, Integer parametersHash, int failRetry, Long failRetryExecutionId) {
 
         LegacyExecution jobExecution = new LegacyExecution();
         jobExecution.setJobId(jobId);
@@ -325,7 +326,8 @@ public class MysqlLegacyController {
         jobExecution.setPriority(priority);
         jobExecution.setParameters(parameters);
         jobExecution.setParametersHash(parametersHash);
-        jobExecution.setFailRetry(0);
+        jobExecution.setFailRetry(failRetry);
+        jobExecution.setFailRetryExecutionId(failRetryExecutionId);
         jobExecution.setMaturity(maturity);
         jobExecution.setBatchId(batchId);
         jobExecution.setChainId(chainId);
@@ -336,13 +338,19 @@ public class MysqlLegacyController {
     }
 
     public LegacyExecution updateJobExecution(Long jobExecutionId, ExecutionStatus status, String parameters, boolean priority, LocalDateTime maturity,
-                    int fails) {
+                    int fails, Long batchId, Long chainId, Long duration, LocalDateTime startedAt, LocalDateTime endedAt, Long failRetryExecutionId) {
 
         LegacyExecution jobExecution = getJobExecutionById(jobExecutionId);
         jobExecution.setStatus(status);
         jobExecution.setParameters(parameters);
         jobExecution.setPriority(priority);
         jobExecution.setMaturity(maturity);
+        jobExecution.setBatchId(batchId);
+        jobExecution.setChainId(chainId);
+        jobExecution.setDuration(duration);
+        jobExecution.setStartedAt(startedAt);
+        jobExecution.setFailRetryExecutionId(failRetryExecutionId);
+        jobExecution.setEndedAt(endedAt);
         jobExecution.setFailRetry(fails);
         logger.info("JobExecution updated: {}", jobExecution);
         return jobExecution;

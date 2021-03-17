@@ -39,7 +39,7 @@ import io.coodoo.workhorse.util.WorkhorseUtil;
 
                 // Poller
                 @NamedQuery(name = "JobExecution.getNextCandidates",
-                                query = "SELECT j FROM LegacyExecution j WHERE j.jobId = :jobId AND j.status = 'QUEUED' AND (j.maturity IS NULL OR j.maturity < :currentTime) AND j.chainPreviousExecutionId IS NULL ORDER BY j.priority, j.createdAt"),
+                                query = "SELECT j FROM LegacyExecution j WHERE j.jobId = :jobId AND (j.status = 'QUEUED' OR j.status = 'PLANNED') AND (j.maturity IS NULL OR j.maturity < :currentTime) AND j.chainPreviousExecutionId IS NULL ORDER BY j.priority, j.createdAt"),
 
                 // Batch
                 @NamedQuery(name = "JobExecution.getBatch", query = "SELECT j FROM LegacyExecution j WHERE j.batchId = :batchId ORDER BY j.createdAt, j.id"),
@@ -53,7 +53,7 @@ import io.coodoo.workhorse.util.WorkhorseUtil;
                 @NamedQuery(name = "JobExecution.getNextInChain",
                                 query = "SELECT j FROM LegacyExecution j WHERE j.chainId = :chainId AND j.chainPreviousExecutionId = :jobExecutionId"),
                 @NamedQuery(name = "JobExecution.abortChain",
-                                query = "UPDATE LegacyExecution j SET j.status = 'ABORTED' WHERE j.chainId = :chainId AND j.status = 'QUEUED'"),
+                                query = "UPDATE LegacyExecution j SET j.status = 'FAILED' WHERE j.chainId = :chainId AND j.status = 'QUEUED'"),
 
                 // Misc
                 @NamedQuery(name = "JobExecution.deleteOlderJobExecutions",

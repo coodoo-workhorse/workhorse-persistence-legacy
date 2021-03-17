@@ -95,7 +95,8 @@ public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
     @Override
     public Execution persist(Execution execution) {
         return map(mysqlLegacyController.createJobExecution(execution.getJobId(), execution.getStatus(), execution.isPriority(), execution.getPlannedFor(),
-                        execution.getBatchId(), execution.getChainId(), execution.getParameters(), execution.getParametersHash()));
+                        execution.getBatchId(), execution.getChainId(), execution.getParameters(), execution.getParametersHash(), execution.getFailRetry(),
+                        execution.getFailRetryExecutionId()));
     }
 
     @Override
@@ -106,7 +107,8 @@ public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
     @Override
     public Execution update(Execution execution) {
         return map(mysqlLegacyController.updateJobExecution(execution.getId(), execution.getStatus(), execution.getParameters(), execution.isPriority(),
-                        execution.getPlannedFor(), execution.getFailRetry()));
+                        execution.getPlannedFor(), execution.getFailRetry(), execution.getBatchId(), execution.getChainId(), execution.getDuration(),
+                        execution.getStartedAt(), execution.getEndedAt(), execution.getFailRetryExecutionId()));
     }
 
     @Override

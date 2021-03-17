@@ -48,11 +48,6 @@ public class MysqlLegacyConfigPersistence implements ConfigPersistence {
     @Override
     public WorkhorseConfig update(WorkhorseConfig workhorseConfig) {
 
-        if (workhorseConfig.getMinutesUntilCleanup() != MysqlLegacyConfig.MINUTES_UNTIL_CLEANUP) {
-            throw new RuntimeException("The " + MysqlLegacyConfig.NAME + " persistence can not change the minutes until cleanup default value of 30 days ("
-                            + MysqlLegacyConfig.MINUTES_UNTIL_CLEANUP + " minutes)");
-        }
-
         LegacyConfig config = mysqlLegacyController.updateConfig(workhorseConfig.getTimeZone(), workhorseConfig.getBufferPollInterval(),
                         workhorseConfig.getBufferMax(), workhorseConfig.getBufferMin(), workhorseConfig.getExecutionTimeout(),
                         workhorseConfig.getExecutionTimeoutStatus(), 0, 0, workhorseConfig.getLogChange(), workhorseConfig.getLogTimeFormat(),
