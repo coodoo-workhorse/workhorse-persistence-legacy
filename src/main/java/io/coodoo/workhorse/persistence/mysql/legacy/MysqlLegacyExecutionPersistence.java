@@ -1,6 +1,7 @@
 package io.coodoo.workhorse.persistence.mysql.legacy;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -198,8 +199,8 @@ public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
 
     @Override
     public List<JobExecutionStatusSummary> getJobExecutionStatusSummaries(ExecutionStatus status, LocalDateTime since) {
-        // TODO Auto-generated method stub
-        return null;
+        List<JobExecutionStatusSummary> result = new ArrayList<>();
+        return result;
     }
 
 }
