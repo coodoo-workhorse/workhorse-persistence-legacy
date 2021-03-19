@@ -12,6 +12,7 @@ import io.coodoo.workhorse.core.entity.Execution;
 import io.coodoo.workhorse.core.entity.ExecutionFailStatus;
 import io.coodoo.workhorse.core.entity.ExecutionLog;
 import io.coodoo.workhorse.core.entity.ExecutionStatus;
+import io.coodoo.workhorse.core.entity.JobExecutionStatusSummary;
 import io.coodoo.workhorse.persistence.interfaces.ExecutionPersistence;
 import io.coodoo.workhorse.persistence.interfaces.listing.ListingResult;
 import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MysqlLegacyConfig;
@@ -193,6 +194,12 @@ public class MysqlLegacyExecutionPersistence implements ExecutionPersistence {
     @Override
     public boolean isPusherAvailable() {
         return false;
+    }
+
+    @Override
+    public List<JobExecutionStatusSummary> getJobExecutionStatusSummaries(ExecutionStatus status, LocalDateTime since) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
