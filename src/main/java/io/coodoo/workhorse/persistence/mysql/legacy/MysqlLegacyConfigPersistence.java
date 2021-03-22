@@ -48,10 +48,11 @@ public class MysqlLegacyConfigPersistence implements ConfigPersistence {
     @Override
     public WorkhorseConfig update(WorkhorseConfig workhorseConfig) {
 
-        LegacyConfig config = mysqlLegacyController.updateConfig(workhorseConfig.getTimeZone(), workhorseConfig.getBufferPollInterval(),
-                        workhorseConfig.getBufferMax(), workhorseConfig.getBufferMin(), workhorseConfig.getExecutionTimeout(),
-                        workhorseConfig.getExecutionTimeoutStatus(), 0, 0, workhorseConfig.getLogChange(), workhorseConfig.getLogTimeFormat(),
-                        workhorseConfig.getLogInfoMarker(), workhorseConfig.getLogWarnMarker(), workhorseConfig.getLogErrorMarker());
+        LegacyConfig config = mysqlLegacyController.updateConfig(workhorseConfig.getTimeZone(),
+                workhorseConfig.getBufferPollInterval(), workhorseConfig.getBufferMax(), workhorseConfig.getBufferMin(),
+                workhorseConfig.getExecutionTimeout(), workhorseConfig.getExecutionTimeoutStatus(), 0, 0,
+                workhorseConfig.getLogChange(), workhorseConfig.getLogTimeFormat(), workhorseConfig.getLogInfoMarker(),
+                workhorseConfig.getLogWarnMarker(), workhorseConfig.getLogErrorMarker());
 
         return mapConfig(config);
     }
@@ -64,6 +65,11 @@ public class MysqlLegacyConfigPersistence implements ConfigPersistence {
     @Override
     public String getPersistenceName() {
         return MysqlLegacyConfig.NAME;
+    }
+
+    @Override
+    public String getPersistenceVersion() {
+        return "MySQL_Persistence_22032020_1130";
     }
 
 }
