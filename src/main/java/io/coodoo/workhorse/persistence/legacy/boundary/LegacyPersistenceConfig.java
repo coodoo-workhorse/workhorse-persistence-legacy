@@ -1,4 +1,4 @@
-package io.coodoo.workhorse.persistence.mysql.legacy.boundary;
+package io.coodoo.workhorse.persistence.legacy.boundary;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -9,9 +9,9 @@ import io.coodoo.workhorse.core.entity.WorkhorseConfig;
 /**
  * @author coodoo GmbH (coodoo.io)
  */
-public class MysqlLegacyConfig extends WorkhorseConfig {
+public class LegacyPersistenceConfig extends WorkhorseConfig {
 
-    public static final String NAME = "MySQL Legacy";
+    public static final String NAME = "Legacy Persistence";
 
     /**
      * ZoneId Object time zone for LocalDateTime instance creation. Default is UTC
@@ -82,7 +82,7 @@ public class MysqlLegacyConfig extends WorkhorseConfig {
 
     public static final Long MINUTES_UNTIL_CLEANUP = 30l * 24l * 60l;
 
-    public MysqlLegacyConfig() {
+    public LegacyPersistenceConfig() {
 
         timeZone = "UTC";
         bufferMax = JOB_QUEUE_MAX;

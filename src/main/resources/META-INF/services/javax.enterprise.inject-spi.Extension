@@ -1,1 +1,1 @@
-io.coodoo.workhorse.persistence.mysql.legacy.control.MysqlLegacyCDIExtension
+io.coodoo.workhorse.persistence.legacy.control.LegacyCDIExtension

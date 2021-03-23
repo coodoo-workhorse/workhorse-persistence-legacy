@@ -1,28 +1,28 @@
-package io.coodoo.workhorse.persistence.mysql.legacy;
+package io.coodoo.workhorse.persistence.legacy;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import io.coodoo.workhorse.core.entity.WorkhorseConfig;
 import io.coodoo.workhorse.persistence.interfaces.ConfigPersistence;
-import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MysqlLegacyConfig;
-import io.coodoo.workhorse.persistence.mysql.legacy.control.MysqlLegacyController;
-import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyConfig;
+import io.coodoo.workhorse.persistence.legacy.boundary.LegacyPersistenceConfig;
+import io.coodoo.workhorse.persistence.legacy.control.LegacyController;
+import io.coodoo.workhorse.persistence.legacy.entity.LegacyConfig;
 
 /**
- * Legacy support for the MySQL Persistence of Workhorse version 1.5.
+ * Legacy support for the Persistence of Workhorse version 1.5.
  * 
  * @author coodoo GmbH (coodoo.io)
  */
 @ApplicationScoped
-public class MysqlLegacyConfigPersistence implements ConfigPersistence {
+public class LegacyConfigPersistence implements ConfigPersistence {
 
     @Inject
-    MysqlLegacyController mysqlLegacyController;
+    LegacyController legacyController;
 
     @Override
     public WorkhorseConfig get() {
-        LegacyConfig config = mysqlLegacyController.getConfig();
+        LegacyConfig config = legacyController.getConfig();
         return mapConfig(config);
     }
 
@@ -30,13 +30,13 @@ public class MysqlLegacyConfigPersistence implements ConfigPersistence {
         if (config == null) {
             return null;
         }
-        WorkhorseConfig workhorseConfig = new MysqlLegacyConfig();
+        WorkhorseConfig workhorseConfig = new LegacyPersistenceConfig();
         workhorseConfig.setTimeZone(config.getTimeZone());
         workhorseConfig.setBufferMax(config.getJobQueueMax());
         workhorseConfig.setBufferMin(config.getJobQueueMin());
         workhorseConfig.setBufferPollInterval(config.getJobQueuePollerInterval());
         workhorseConfig.setBufferPushFallbackPollInterval(config.getJobQueuePollerInterval());
-        workhorseConfig.setMinutesUntilCleanup(MysqlLegacyConfig.MINUTES_UNTIL_CLEANUP);
+        workhorseConfig.setMinutesUntilCleanup(LegacyPersistenceConfig.MINUTES_UNTIL_CLEANUP);
         workhorseConfig.setLogChange(config.getLogChange());
         workhorseConfig.setLogTimeFormat(config.getLogTimeFormatter());
         workhorseConfig.setLogInfoMarker(config.getLogInfoMarker());
@@ -48,11 +48,10 @@ public class MysqlLegacyConfigPersistence implements ConfigPersistence {
     @Override
     public WorkhorseConfig update(WorkhorseConfig workhorseConfig) {
 
-        LegacyConfig config = mysqlLegacyController.updateConfig(workhorseConfig.getTimeZone(),
-                workhorseConfig.getBufferPollInterval(), workhorseConfig.getBufferMax(), workhorseConfig.getBufferMin(),
-                workhorseConfig.getExecutionTimeout(), workhorseConfig.getExecutionTimeoutStatus(), 0, 0,
-                workhorseConfig.getLogChange(), workhorseConfig.getLogTimeFormat(), workhorseConfig.getLogInfoMarker(),
-                workhorseConfig.getLogWarnMarker(), workhorseConfig.getLogErrorMarker());
+        LegacyConfig config = legacyController.updateConfig(workhorseConfig.getTimeZone(), workhorseConfig.getBufferPollInterval(),
+                        workhorseConfig.getBufferMax(), workhorseConfig.getBufferMin(), workhorseConfig.getExecutionTimeout(),
+                        workhorseConfig.getExecutionTimeoutStatus(), 0, 0, workhorseConfig.getLogChange(), workhorseConfig.getLogTimeFormat(),
+                        workhorseConfig.getLogInfoMarker(), workhorseConfig.getLogWarnMarker(), workhorseConfig.getLogErrorMarker());
 
         return mapConfig(config);
     }
@@ -64,12 +63,12 @@ public class MysqlLegacyConfigPersistence implements ConfigPersistence {
 
     @Override
     public String getPersistenceName() {
-        return MysqlLegacyConfig.NAME;
+        return LegacyPersistenceConfig.NAME;
     }
 
     @Override
     public String getPersistenceVersion() {
-        return "MySQL_Persistence_22032020_1130";
+        return "2.0.0-RC2-SNAPSHOT";
     }
 
 }

@@ -1,6 +1,6 @@
-# Workhorse Persistence MySQL Legacy
+# Persistence for Workhorse 1.5 Legacy
 
-> Legacy support for the MySQL Persistence of Workhorse version 1.5
+> Legacy persistence to support Workhorse runnning in version 1.5
 
 ## Table of Contents
 <img align="right" height="200px" src="logo.png">
@@ -23,12 +23,12 @@ Before you begin, ensure you have met the following requirements:
 
 ## Install
 
-1. Add the following dependency to your project ([published on Maven Central](https://search.maven.org/artifact/io.coodoo/workhorse-persistence-mysql-legacy/))
+1. Add the following dependency to your project ([published on Maven Central](https://search.maven.org/artifact/io.coodoo/workhorse-persistence-legacy/))
    
    ```xml
    <dependency>
        <groupId>io.coodoo</groupId>
-       <artifactId>workhorse-persistence-mysql-legacy</artifactId>
+       <artifactId>workhorse-persistence-legacy</artifactId>
        <version>2.0.0-RC1-SNAPSHOT</version>
    </dependency>
    ```
@@ -38,12 +38,10 @@ Before you begin, ensure you have met the following requirements:
    You can find a SQL script to create the tables [here](./src/main/resources/mysql-schema.sql).
    
    ```xml
-	<class>io.coodoo.workhorse.jobengine.entity.Job</class>
-	<class>io.coodoo.workhorse.jobengine.entity.JobExecution</class>
-	<class>io.coodoo.workhorse.config.entity.Config</class>
-	<class>io.coodoo.workhorse.log.entity.Log</class>
-	<class>io.coodoo.workhorse.api.entity.LogView</class>
-	<class>io.coodoo.workhorse.api.entity.JobExecutionView</class>
+	<class>io.coodoo.workhorse.persistence.legacy.entity.LegacyJob</class>
+	<class>io.coodoo.workhorse.persistence.legacy.entity.LegacyExecution</class>
+	<class>io.coodoo.workhorse.persistence.legacy.entity.LegacyConfig</class>
+	<class>io.coodoo.workhorse.persistence.legacy.entity.LegacyLog</class>
    ```
 3. To provide the EntityManager you have to implement a `@JobEngineEntityManagerProducer` CDI producer.
 
@@ -67,19 +65,19 @@ Before you begin, ensure you have met the following requirements:
 
 ## Getting started
 
-After the [installation](#install) all you need is to create an `MysqlLegacyConfig` instance an pass it to the `start()` method of the `WorkhorseService`.
+After the [installation](#install) all you need is to create an `LegacyConfig` instance an pass it to the `start()` method of the `WorkhorseService`.
 
 ```java
 @Inject
 WorkhorseService workhorseService;
 
-public void startWithMysqlLegacyPersistence() {
-    MysqlLegacyConfig mysqlLegacyConfig = new MysqlLegacyConfigBuilder().build();
-    workhorseService.start(mysqlLegacyConfig);
+public void startWithLegacyPersistence() {
+    LegacyConfig legacyConfig = new LegacyConfigBuilder().build();
+    workhorseService.start(legacyConfig);
 }
 ```
 
-If you are using this persistence, you should already have your configuration provided in your MySQL database. Otherwise you can pass the configuration you want using the builder on `MysqlLegacyConfig`.
+If you are using this persistence, you should already have your configuration provided in your database. Otherwise you can pass the configuration you want using the builder on `LegacyConfig`.
 
 
 

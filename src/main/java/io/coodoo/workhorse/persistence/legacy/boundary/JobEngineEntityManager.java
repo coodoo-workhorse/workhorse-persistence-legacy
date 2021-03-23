@@ -1,4 +1,4 @@
-package io.coodoo.workhorse.persistence.mysql.legacy.boundary;
+package io.coodoo.workhorse.persistence.legacy.boundary;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

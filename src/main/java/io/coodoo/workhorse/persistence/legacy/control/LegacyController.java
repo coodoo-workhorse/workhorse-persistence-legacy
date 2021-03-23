@@ -1,4 +1,4 @@
-package io.coodoo.workhorse.persistence.mysql.legacy.control;
+package io.coodoo.workhorse.persistence.legacy.control;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,11 +19,11 @@ import io.coodoo.framework.listing.boundary.ListingResult;
 import io.coodoo.workhorse.core.control.StaticConfig;
 import io.coodoo.workhorse.core.entity.ExecutionStatus;
 import io.coodoo.workhorse.core.entity.JobStatus;
-import io.coodoo.workhorse.persistence.mysql.legacy.boundary.JobEngineEntityManager;
-import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyConfig;
-import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyExecution;
-import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyJob;
-import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyLog;
+import io.coodoo.workhorse.persistence.legacy.boundary.JobEngineEntityManager;
+import io.coodoo.workhorse.persistence.legacy.entity.LegacyConfig;
+import io.coodoo.workhorse.persistence.legacy.entity.LegacyExecution;
+import io.coodoo.workhorse.persistence.legacy.entity.LegacyJob;
+import io.coodoo.workhorse.persistence.legacy.entity.LegacyLog;
 import io.coodoo.workhorse.util.WorkhorseUtil;
 
 /**
@@ -32,9 +32,9 @@ import io.coodoo.workhorse.util.WorkhorseUtil;
  * @author coodoo GmbH (coodoo.io)
  */
 @Stateless
-public class MysqlLegacyController {
+public class LegacyController {
 
-    private final Logger logger = LoggerFactory.getLogger(MysqlLegacyController.class);
+    private final Logger logger = LoggerFactory.getLogger(LegacyController.class);
 
     @Inject
     @JobEngineEntityManager

@@ -1,4 +1,4 @@
-package io.coodoo.workhorse.persistence.mysql.legacy;
+package io.coodoo.workhorse.persistence.legacy;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,24 +10,24 @@ import io.coodoo.framework.listing.boundary.ListingParameters;
 import io.coodoo.workhorse.core.entity.WorkhorseLog;
 import io.coodoo.workhorse.persistence.interfaces.LogPersistence;
 import io.coodoo.workhorse.persistence.interfaces.listing.ListingResult;
-import io.coodoo.workhorse.persistence.mysql.legacy.boundary.MysqlLegacyConfig;
-import io.coodoo.workhorse.persistence.mysql.legacy.control.MysqlLegacyController;
-import io.coodoo.workhorse.persistence.mysql.legacy.entity.LegacyLog;
+import io.coodoo.workhorse.persistence.legacy.boundary.LegacyPersistenceConfig;
+import io.coodoo.workhorse.persistence.legacy.control.LegacyController;
+import io.coodoo.workhorse.persistence.legacy.entity.LegacyLog;
 
 /**
- * Legacy support for the MySQL Persistence of Workhorse version 1.5
+ * Legacy support for the Persistence of Workhorse version 1.5
  * 
  * @author coodoo GmbH (coodoo.io)
  */
 @ApplicationScoped
-public class MysqlLegacyLogPersistence implements LogPersistence {
+public class LegacyLogPersistence implements LogPersistence {
 
     @Inject
-    MysqlLegacyController mysqlLegacyController;
+    LegacyController legacyController;
 
     @Override
     public WorkhorseLog get(Long logId) {
-        return map(mysqlLegacyController.getLog(logId));
+        return map(legacyController.getLog(logId));
     }
 
     private WorkhorseLog map(LegacyLog log) {
@@ -57,7 +57,7 @@ public class MysqlLegacyLogPersistence implements LogPersistence {
         params.setFilterAttributes(listingParameters.getFilterAttributes());
         params.setFilter(listingParameters.getFilter());
 
-        io.coodoo.framework.listing.boundary.ListingResult<LegacyLog> result = mysqlLegacyController.listLogs(params);
+        io.coodoo.framework.listing.boundary.ListingResult<LegacyLog> result = legacyController.listLogs(params);
         List<WorkhorseLog> results = result.getResults().stream().map(l -> map(l)).collect(Collectors.toList());
 
         io.coodoo.workhorse.persistence.interfaces.listing.Metadata metadata =
@@ -73,28 +73,28 @@ public class MysqlLegacyLogPersistence implements LogPersistence {
 
     @Override
     public WorkhorseLog delete(Long logId) {
-        return map(mysqlLegacyController.deleteLogsById(logId));
+        return map(legacyController.deleteLogsById(logId));
     }
 
     @Override
     public WorkhorseLog persist(WorkhorseLog workhorseLog) {
-        return map(mysqlLegacyController.createLog(workhorseLog.getMessage(), workhorseLog.getJobId(), workhorseLog.getJobStatus(), workhorseLog.isByUser(),
+        return map(legacyController.createLog(workhorseLog.getMessage(), workhorseLog.getJobId(), workhorseLog.getJobStatus(), workhorseLog.isByUser(),
                         workhorseLog.getChangeParameter(), workhorseLog.getChangeOld(), workhorseLog.getChangeNew(), workhorseLog.getStacktrace()));
     }
 
     @Override
     public List<WorkhorseLog> getAll(int limit) {
-        return mysqlLegacyController.listLogs(new ListingParameters(limit)).getResults().stream().map(l -> map(l)).collect(Collectors.toList());
+        return legacyController.listLogs(new ListingParameters(limit)).getResults().stream().map(l -> map(l)).collect(Collectors.toList());
     }
 
     @Override
     public int deleteByJobId(Long jobId) {
-        return mysqlLegacyController.deleteAllLogsByJobId(jobId);
+        return legacyController.deleteAllLogsByJobId(jobId);
     }
 
     @Override
     public String getPersistenceName() {
-        return MysqlLegacyConfig.NAME;
+        return LegacyPersistenceConfig.NAME;
     }
 
     @Override

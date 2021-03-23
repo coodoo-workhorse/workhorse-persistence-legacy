@@ -1,4 +1,4 @@
-package io.coodoo.workhorse.persistence.mysql.legacy.entity;
+package io.coodoo.workhorse.persistence.legacy.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

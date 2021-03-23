@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.coodoo</groupId>
-	<artifactId>workhorse-persistence-mysql-legacy</artifactId>
-	<version>2.0.0-RC1-20210312-SNAPSHOT</version>
+	<artifactId>workhorse-persistence-legacy</artifactId>
+	<version>2.0.0-RC2-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>Workhorse Persistence MySQL Legacy</name>
-	<description>Legacy support for the MySQL Persistence of Workhorse version 1.5</description>
+	<name>Workhorse Persistence Legacy</name>
+	<description>Legacy persistence to support Workhorse runnning in version 1.5</description>
 	<url>http://workhorse.coodoo.io/</url>
 	<inceptionYear>2021</inceptionYear>
 	<organization>
@@ -87,7 +87,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>workhorse-persistence-mysql-legacy</finalName>
+		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
