@@ -12,6 +12,7 @@ import io.coodoo.workhorse.core.entity.WorkhorseConfig;
 public class LegacyPersistenceConfig extends WorkhorseConfig {
 
     public static final String NAME = "Legacy Persistence";
+    public static final String VERSION = "2.0.0-RC2-SNAPSHOT";
 
     /**
      * ZoneId Object time zone for LocalDateTime instance creation. Default is UTC
@@ -102,6 +103,11 @@ public class LegacyPersistenceConfig extends WorkhorseConfig {
     @Override
     public String getPersistenceName() {
         return NAME;
+    }
+
+    @Override
+    public String getPersistenceVersion() {
+        return VERSION;
     }
 
 }

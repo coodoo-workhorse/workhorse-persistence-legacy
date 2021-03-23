@@ -68,7 +68,7 @@ public class LegacyConfigPersistence implements ConfigPersistence {
 
     @Override
     public String getPersistenceVersion() {
-        return "2.0.0-RC2-SNAPSHOT";
+        return LegacyPersistenceConfig.VERSION;
     }
 
 }
