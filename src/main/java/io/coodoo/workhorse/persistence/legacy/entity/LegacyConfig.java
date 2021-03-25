@@ -25,7 +25,7 @@ import io.coodoo.workhorse.core.entity.ExecutionStatus;
 @Table(name = "jobengine_config")
 @NamedQueries({
 
-                @NamedQuery(name = "Config.getConfig", query = "SELECT c FROM LegacyConfig c")
+                @NamedQuery(name = "LegacyConfig.getConfig", query = "SELECT c FROM LegacyConfig c")
 
 })
 public class LegacyConfig extends AbstractIdCreatedUpdatedAtEntity {
@@ -256,13 +256,13 @@ public class LegacyConfig extends AbstractIdCreatedUpdatedAtEntity {
     }
 
     /**
-     * Executes the query 'Config.getConfig' returning one/the first object or null if nothing has been found.
+     * Executes the query 'LegacyConfig.getConfig' returning one/the first object or null if nothing has been found.
      *
      * @param entityManager the entityManager
      * @return the result
      */
     public static LegacyConfig getConfig(EntityManager entityManager) {
-        Query query = entityManager.createNamedQuery("Config.getConfig");
+        Query query = entityManager.createNamedQuery("LegacyConfig.getConfig");
         query = query.setMaxResults(1);
         @SuppressWarnings("rawtypes")
         List results = query.getResultList();
