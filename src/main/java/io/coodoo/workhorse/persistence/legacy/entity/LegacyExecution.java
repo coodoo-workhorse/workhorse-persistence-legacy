@@ -74,6 +74,12 @@ import io.coodoo.workhorse.util.WorkhorseUtil;
                                 query = "SELECT COUNT(j) FROM LegacyExecution j WHERE j.jobId = :jobId AND j.status = 'QUEUED' and (j.parameters IS NULL or j.parameters = :parameters)"),
                 @NamedQuery(name = "JobExecution.countByJobIdAndStatus",
                                 query = "SELECT COUNT(j) FROM LegacyExecution j WHERE j.jobId = :jobId AND j.status = :status"),
+                @NamedQuery(name = "JobExecution.countDistinctJobIdByStatus",
+                                query = "SELECT DISTINCT j.jobId FROM LegacyExecution j WHERE j.status = :status"),
+                @NamedQuery(name = "JobExecution.countDistinctJobIdByStatusAndSince",
+                                query = "SELECT DISTINCT j.jobId FROM LegacyExecution j WHERE j.status = :status AND j.createdAt > :since"),
+                @NamedQuery(name = "JobExecution.countByJobIdAndStatusAndSince",
+                                query = "SELECT count(j) FROM LegacyExecution j WHERE j.jobId = :jobId AND j.status = :status AND j.createdAt > :since"),
 
 })
 
@@ -583,6 +589,36 @@ public class LegacyExecution extends AbstractIdCreatedUpdatedAtEntity {
     }
 
     /**
+     * Executes the query 'JobExecution.countDistinctJobIdByStatus' returning a list of result objects.
+     *
+     * @param entityManager the entityManager
+     * @param status the status
+     * @return List of result objects
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Long> countDistinctJobIdByStatus(EntityManager entityManager, ExecutionStatus status) {
+        Query query = entityManager.createNamedQuery("JobExecution.countDistinctJobIdByStatus");
+        query = query.setParameter("status", status);
+        return query.getResultList();
+    }
+
+    /**
+     * Executes the query 'JobExecution.countDistinctJobIdByStatusAndSince' returning a list of result objects.
+     *
+     * @param entityManager the entityManager
+     * @param since the since
+     * @param status the status
+     * @return List of result objects
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Long> countDistinctJobIdByStatusAndSince(EntityManager entityManager, LocalDateTime since, ExecutionStatus status) {
+        Query query = entityManager.createNamedQuery("JobExecution.countDistinctJobIdByStatusAndSince");
+        query = query.setParameter("since", since);
+        query = query.setParameter("status", status);
+        return query.getResultList();
+    }
+
+    /**
      * Executes the query 'JobExecution.countByJobIdAndStatus' returning one/the first object or null if nothing has been found.
      *
      * @param entityManager the entityManager
@@ -593,6 +629,29 @@ public class LegacyExecution extends AbstractIdCreatedUpdatedAtEntity {
     public static Long countByJobIdAndStatus(EntityManager entityManager, Long jobId, ExecutionStatus status) {
         Query query = entityManager.createNamedQuery("JobExecution.countByJobIdAndStatus");
         query = query.setParameter("jobId", jobId);
+        query = query.setParameter("status", status);
+        query = query.setMaxResults(1);
+        @SuppressWarnings("rawtypes")
+        List results = query.getResultList();
+        if (results.isEmpty()) {
+            return null;
+        }
+        return (Long) results.get(0);
+    }
+
+    /**
+     * Executes the query 'JobExecution.countByJobIdAndStatusAndSince' returning one/the first object or null if nothing has been found.
+     *
+     * @param entityManager the entityManager
+     * @param jobId the jobId
+     * @param since the since
+     * @param status the status
+     * @return the result
+     */
+    public static Long countByJobIdAndStatusAndSince(EntityManager entityManager, Long jobId, LocalDateTime since, ExecutionStatus status) {
+        Query query = entityManager.createNamedQuery("JobExecution.countByJobIdAndStatusAndSince");
+        query = query.setParameter("jobId", jobId);
+        query = query.setParameter("since", since);
         query = query.setParameter("status", status);
         query = query.setMaxResults(1);
         @SuppressWarnings("rawtypes")

@@ -1,7 +1,6 @@
 package io.coodoo.workhorse.persistence.legacy;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -199,8 +198,7 @@ public class LegacyExecutionPersistence implements ExecutionPersistence {
 
     @Override
     public List<JobExecutionStatusSummary> getJobExecutionStatusSummaries(ExecutionStatus status, LocalDateTime since) {
-        List<JobExecutionStatusSummary> result = new ArrayList<>();
-        return result;
+    	return legacyController.getJobExecutionStatusSummaries(status, since);
     }
 
 }

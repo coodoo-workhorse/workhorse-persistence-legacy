@@ -68,7 +68,7 @@ public class LegacyConfigPersistence implements ConfigPersistence {
 
     @Override
     public String getPersistenceVersion() {
-        return LegacyPersistenceConfig.VERSION;
+        return LegacyPersistenceConfig.VERSION + "-210325-2055-execution-summary";
     }
 
 }

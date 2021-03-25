@@ -1,6 +1,7 @@
 package io.coodoo.workhorse.persistence.legacy.control;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -18,6 +19,8 @@ import io.coodoo.framework.listing.boundary.ListingParameters;
 import io.coodoo.framework.listing.boundary.ListingResult;
 import io.coodoo.workhorse.core.control.StaticConfig;
 import io.coodoo.workhorse.core.entity.ExecutionStatus;
+import io.coodoo.workhorse.core.entity.Job;
+import io.coodoo.workhorse.core.entity.JobExecutionStatusSummary;
 import io.coodoo.workhorse.core.entity.JobStatus;
 import io.coodoo.workhorse.persistence.legacy.boundary.JobEngineEntityManager;
 import io.coodoo.workhorse.persistence.legacy.entity.LegacyConfig;
@@ -53,10 +56,9 @@ public class LegacyController {
         return config;
     }
 
-    public LegacyConfig updateConfig(String timeZone, int jobQueuePollerInterval, int jobQueueMax, int jobQueueMin,
-            int zombieRecognitionTime, ExecutionStatus zombieCureStatus, int daysUntilStatisticMinutesDeletion,
-            int daysUntilStatisticHoursDeletion, String logChange, String logTimeFormatter, String logInfoMarker,
-            String logWarnMarker, String logErrorMarker) {
+    public LegacyConfig updateConfig(String timeZone, int jobQueuePollerInterval, int jobQueueMax, int jobQueueMin, int zombieRecognitionTime,
+                    ExecutionStatus zombieCureStatus, int daysUntilStatisticMinutesDeletion, int daysUntilStatisticHoursDeletion, String logChange,
+                    String logTimeFormatter, String logInfoMarker, String logWarnMarker, String logErrorMarker) {
 
         LegacyConfig config = getConfig();
         config.setTimeZone(timeZone);
@@ -95,9 +97,8 @@ public class LegacyController {
      * Logs a text message in an own {@link Transaction}
      * 
      * @param message text to log
-     * @param jobId   optional: belonging {@link LegacyJob}-ID
-     * @param byUser  <code>true</code> if author is a user, <code>false</code> if
-     *                author is the system
+     * @param jobId optional: belonging {@link LegacyJob}-ID
+     * @param byUser <code>true</code> if author is a user, <code>false</code> if author is the system
      * @return the resulting log entry
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -109,9 +110,8 @@ public class LegacyController {
      * Logs a text message
      * 
      * @param message text to log
-     * @param jobId   optional: belonging {@link LegacyJob}-ID
-     * @param byUser  <code>true</code> if author is a user, <code>false</code> if
-     *                author is the system
+     * @param jobId optional: belonging {@link LegacyJob}-ID
+     * @param byUser <code>true</code> if author is a user, <code>false</code> if author is the system
      * @return the resulting log entry
      */
     public LegacyLog logMessage(String message, Long jobId, boolean byUser) {
@@ -126,8 +126,8 @@ public class LegacyController {
         return createLog(message, jobId, jobStatus, byUser, null, null, null, null);
     }
 
-    public LegacyLog createLog(String message, Long jobId, JobStatus jobStatus, boolean byUser, String changeParameter,
-            String changeOld, String changeNew, String stacktrace) {
+    public LegacyLog createLog(String message, Long jobId, JobStatus jobStatus, boolean byUser, String changeParameter, String changeOld, String changeNew,
+                    String stacktrace) {
 
         LegacyLog log = new LegacyLog();
         log.setMessage(message);
@@ -187,9 +187,8 @@ public class LegacyController {
         return LegacyJob.getAllScheduled(entityManager);
     }
 
-    public LegacyJob createJob(String name, String description, List<String> tags, String workerClassName,
-            String parametersClassName, String schedule, JobStatus status, int threads, Integer maxPerMinute,
-            int failRetries, int retryDelay, int daysUntilCleanUp, boolean uniqueInQueue) {
+    public LegacyJob createJob(String name, String description, List<String> tags, String workerClassName, String parametersClassName, String schedule,
+                    JobStatus status, int threads, Integer maxPerMinute, int failRetries, int retryDelay, int daysUntilCleanUp, boolean uniqueInQueue) {
 
         LegacyJob dbJob = new LegacyJob();
         dbJob.setName(name);
@@ -211,9 +210,8 @@ public class LegacyController {
         return dbJob;
     }
 
-    public LegacyJob updateJob(Long jobId, String name, String description, List<String> tags, String workerClassName,
-            String schedule, JobStatus status, int threads, Integer maxPerMinute, int failRetries, int retryDelay,
-            int daysUntilCleanUp, boolean uniqueInQueue) {
+    public LegacyJob updateJob(Long jobId, String name, String description, List<String> tags, String workerClassName, String schedule, JobStatus status,
+                    int threads, Integer maxPerMinute, int failRetries, int retryDelay, int daysUntilCleanUp, boolean uniqueInQueue) {
 
         LegacyJob dbJob = getJobById(jobId);
         dbJob.setName(name);
@@ -242,8 +240,7 @@ public class LegacyController {
 
         entityManager.remove(job);
 
-        String logMessage = String.format("Job removed (including %d executions and %d logs): %s", deletedJobExecutions,
-                deletedJobLogs, job.toString());
+        String logMessage = String.format("Job removed (including %d executions and %d logs): %s", deletedJobExecutions, deletedJobLogs, job.toString());
         logger.trace(logMessage);
     }
 
@@ -255,8 +252,7 @@ public class LegacyController {
      * Check whether all executions of a batch job are finished.
      * 
      * @param batchId the ID of the batch executions
-     * @return <code>true</code> if no execution of this batch job is either queued
-     *         or running.
+     * @return <code>true</code> if no execution of this batch job is either queued or running.
      */
     public boolean isBatchFinished(Long batchId) {
         Long queuedExecutions = countBatchExecutions(batchId, ExecutionStatus.QUEUED);
@@ -278,12 +274,10 @@ public class LegacyController {
     }
 
     /**
-     * Abort all executions of a batch that are in status
-     * {@link ExecutionStatus#QUEUED}
+     * Abort all executions of a batch that are in status {@link ExecutionStatus#QUEUED}
      * 
      * @param batchId the ID of the batch executions
-     * @return the amount of executions of that batch that where put in status
-     *         {@link ExecutionStatus#ABORTED}
+     * @return the amount of executions of that batch that where put in status {@link ExecutionStatus#ABORTED}
      */
     public int abortBatch(Long batchId) {
         return LegacyExecution.abortBatch(entityManager, batchId);
@@ -300,19 +294,15 @@ public class LegacyController {
     }
 
     public void appendExecutionFailure(Long jobId, Long executionId, String error, String stacktrace) {
-        String query = "UPDATE jobengine_execution SET fail_message = :error, fail_stacktrace = :stacktrace WHERE id = "
-                + executionId;
-        entityManager.createNativeQuery(query).setParameter("error", error).setParameter("stacktrace", stacktrace)
-                .executeUpdate();
+        String query = "UPDATE jobengine_execution SET fail_message = :error, fail_stacktrace = :stacktrace WHERE id = " + executionId;
+        entityManager.createNativeQuery(query).setParameter("error", error).setParameter("stacktrace", stacktrace).executeUpdate();
     }
 
     /**
-     * Abort all executions of a chain that are in status
-     * {@link ExecutionStatus#QUEUED}
+     * Abort all executions of a chain that are in status {@link ExecutionStatus#QUEUED}
      * 
      * @param chainId the ID of the chain executions
-     * @return the amount of executions of that chain that where put in status
-     *         {@link ExecutionStatus#ABORTED}
+     * @return the amount of executions of that chain that where put in status {@link ExecutionStatus#ABORTED}
      */
     public int abortChain(Long chainId) {
         return LegacyExecution.abortChain(entityManager, chainId);
@@ -330,9 +320,8 @@ public class LegacyController {
         return LegacyExecution.findZombies(entityManager, time);
     }
 
-    public LegacyExecution createJobExecution(Long jobId, ExecutionStatus status, boolean priority,
-            LocalDateTime maturity, Long batchId, Long chainId, String parameters, Integer parametersHash,
-            int failRetry, Long failRetryExecutionId) {
+    public LegacyExecution createJobExecution(Long jobId, ExecutionStatus status, boolean priority, LocalDateTime maturity, Long batchId, Long chainId,
+                    String parameters, Integer parametersHash, int failRetry, Long failRetryExecutionId) {
 
         LegacyExecution jobExecution = new LegacyExecution();
         jobExecution.setJobId(jobId);
@@ -351,9 +340,8 @@ public class LegacyController {
         return jobExecution;
     }
 
-    public LegacyExecution updateJobExecution(Long jobExecutionId, ExecutionStatus status, String parameters,
-            boolean priority, LocalDateTime maturity, int fails, Long batchId, Long chainId, Long duration,
-            LocalDateTime startedAt, LocalDateTime endedAt, Long failRetryExecutionId) {
+    public LegacyExecution updateJobExecution(Long jobExecutionId, ExecutionStatus status, String parameters, boolean priority, LocalDateTime maturity,
+                    int fails, Long batchId, Long chainId, Long duration, LocalDateTime startedAt, LocalDateTime endedAt, Long failRetryExecutionId) {
 
         LegacyExecution jobExecution = getJobExecutionById(jobExecutionId);
         jobExecution.setStatus(status);
@@ -394,4 +382,46 @@ public class LegacyController {
         return LegacyExecution.deleteOlderJobExecutions(entityManager, jobId, preDate);
     }
 
+    public List<JobExecutionStatusSummary> getJobExecutionStatusSummaries(ExecutionStatus status, LocalDateTime since) {
+
+        List<JobExecutionStatusSummary> executionStatusSummaries = new ArrayList<JobExecutionStatusSummary>();
+        List<Long> jobIds;
+        if (since == null) {
+            jobIds = LegacyExecution.countDistinctJobIdByStatus(entityManager, status);
+        } else {
+            jobIds = LegacyExecution.countDistinctJobIdByStatusAndSince(entityManager, since, status);
+        }
+        for (Long jobId : jobIds) {
+
+            LegacyJob legacyJob = getJobById(jobId);
+            Job job = new Job();
+            job.setId(legacyJob.getId());
+            job.setName(legacyJob.getName());
+            job.setDescription(legacyJob.getDescription());
+            job.setWorkerClassName(legacyJob.getWorkerClassName());
+            job.setParametersClassName(legacyJob.getParametersClassName());
+            job.setStatus(legacyJob.getStatus());
+            job.setThreads(legacyJob.getThreads());
+            job.setMaxPerMinute(legacyJob.getMaxPerMinute());
+            job.setFailRetries(legacyJob.getFailRetries());
+            job.setRetryDelay(legacyJob.getRetryDelay());
+            job.setMinutesUntilCleanUp(legacyJob.getDaysUntilCleanUp() / 24 / 60);
+            job.setUniqueQueued(legacyJob.isUniqueInQueue());
+            job.setSchedule(legacyJob.getSchedule());
+            job.setCreatedAt(legacyJob.getCreatedAt());
+            job.setUpdatedAt(legacyJob.getUpdatedAt());
+
+            Long count;
+            if (since == null) {
+                count = LegacyExecution.countByJobIdAndStatus(entityManager, jobId, status);
+            } else {
+                count = LegacyExecution.countByJobIdAndStatusAndSince(entityManager, jobId, since, status);
+            }
+            JobExecutionStatusSummary summary = new JobExecutionStatusSummary(status, count, job);
+
+            executionStatusSummaries.add(summary);
+        }
+
+        return executionStatusSummaries;
+    }
 }
