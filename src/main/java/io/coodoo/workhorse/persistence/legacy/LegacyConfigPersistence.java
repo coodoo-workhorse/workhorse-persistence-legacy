@@ -17,6 +17,8 @@ import io.coodoo.workhorse.persistence.legacy.entity.LegacyConfig;
 @ApplicationScoped
 public class LegacyConfigPersistence implements ConfigPersistence {
 
+    private static LegacyPersistenceConfig legacyPersistenceConfig = new LegacyPersistenceConfig();
+
     @Inject
     LegacyController legacyController;
 
@@ -63,12 +65,12 @@ public class LegacyConfigPersistence implements ConfigPersistence {
 
     @Override
     public String getPersistenceName() {
-        return LegacyPersistenceConfig.NAME;
+        return legacyPersistenceConfig.getPersistenceName();
     }
 
     @Override
     public String getPersistenceVersion() {
-        return LegacyPersistenceConfig.VERSION + "-210325-2055-execution-summary";
+        return legacyPersistenceConfig.getPersistenceVersion();
     }
 
 }

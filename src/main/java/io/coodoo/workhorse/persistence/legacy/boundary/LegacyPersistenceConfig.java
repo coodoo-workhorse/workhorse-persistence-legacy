@@ -1,5 +1,10 @@
 package io.coodoo.workhorse.persistence.legacy.boundary;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
@@ -12,7 +17,6 @@ import io.coodoo.workhorse.core.entity.WorkhorseConfig;
 public class LegacyPersistenceConfig extends WorkhorseConfig {
 
     public static final String NAME = "Legacy Persistence";
-    public static final String VERSION = "2.0.0-RC2-SNAPSHOT";
 
     /**
      * ZoneId Object time zone for LocalDateTime instance creation. Default is UTC
@@ -83,6 +87,28 @@ public class LegacyPersistenceConfig extends WorkhorseConfig {
 
     public static final Long MINUTES_UNTIL_CLEANUP = 30l * 24l * 60l;
 
+    private static String version = null;
+    {
+        try {
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("version.txt");
+            InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            BufferedReader reader = new BufferedReader(streamReader);
+            version = reader.readLine();
+            if (version == null) {
+                version = "Unknown";
+            } else {
+                if (version.endsWith("SNAPSHOT")) {
+                    String timestamp = reader.readLine();
+                    if (timestamp != null) {
+                        version += " (" + timestamp + ")";
+                    }
+                }
+            }
+        } catch (IOException e) {
+            version = "Unknown (" + e.getMessage() + ")";
+        }
+    }
+
     public LegacyPersistenceConfig() {
 
         timeZone = "UTC";
@@ -107,7 +133,7 @@ public class LegacyPersistenceConfig extends WorkhorseConfig {
 
     @Override
     public String getPersistenceVersion() {
-        return VERSION;
+        return version;
     }
 
 }
