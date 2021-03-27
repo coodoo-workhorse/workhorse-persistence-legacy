@@ -95,7 +95,7 @@
 		      <directory>src/main/resources</directory>
 		      <filtering>true</filtering>
 		      <includes>
-					<include>version.txt</include>
+					<include>workhorse-persistence-legacy.txt</include>
 				</includes>
 		   </resource>
 		</resources>

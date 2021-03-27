@@ -90,7 +90,7 @@ public class LegacyPersistenceConfig extends WorkhorseConfig {
     private static String version = null;
     {
         try {
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("version.txt");
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("workhorse-persistence-legacy.txt");
             InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
             BufferedReader reader = new BufferedReader(streamReader);
             version = reader.readLine();
