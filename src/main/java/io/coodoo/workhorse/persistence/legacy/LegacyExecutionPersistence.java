@@ -18,6 +18,7 @@ import io.coodoo.workhorse.persistence.interfaces.listing.ListingResult;
 import io.coodoo.workhorse.persistence.legacy.boundary.LegacyPersistenceConfig;
 import io.coodoo.workhorse.persistence.legacy.control.LegacyController;
 import io.coodoo.workhorse.persistence.legacy.entity.LegacyExecution;
+import io.coodoo.workhorse.persistence.legacy.entity.LegacyExecutionView;
 
 /**
  * Legacy support for the Persistence of Workhorse version 1.5
@@ -32,33 +33,7 @@ public class LegacyExecutionPersistence implements ExecutionPersistence {
 
     @Override
     public Execution getById(Long jobId, Long executionId) {
-        return map(legacyController.getJobExecutionById(executionId));
-    }
-
-    private Execution map(LegacyExecution jobExecution) {
-        if (jobExecution == null) {
-            return null;
-        }
-        Execution execution = new Execution();
-        execution.setId(jobExecution.getId());
-        execution.setJobId(jobExecution.getJobId());
-        execution.setStatus(jobExecution.getStatus());
-        execution.setFailStatus(ExecutionFailStatus.NONE);
-        execution.setStartedAt(jobExecution.getStartedAt());
-        execution.setEndedAt(jobExecution.getEndedAt());
-        execution.setDuration(jobExecution.getDuration());
-        execution.setPriority(jobExecution.isPriority());
-        execution.setPlannedFor(jobExecution.getMaturity());
-        execution.setExpiresAt(null);
-        execution.setBatchId(jobExecution.getBatchId());
-        execution.setChainId(jobExecution.getChainId());
-        execution.setParameters(jobExecution.getParameters());
-        execution.setParametersHash(jobExecution.getParametersHash());
-        execution.setFailRetry(jobExecution.getFailRetry());
-        execution.setFailRetryExecutionId(jobExecution.getFailRetryExecutionId());
-        execution.setCreatedAt(jobExecution.getCreatedAt());
-        execution.setUpdatedAt(jobExecution.getUpdatedAt());
-        return execution;
+        return LegacyExecution.map(legacyController.getJobExecutionById(executionId));
     }
 
     @Override
@@ -67,7 +42,7 @@ public class LegacyExecutionPersistence implements ExecutionPersistence {
         ListingParameters listingParameters = new ListingParameters(limit.intValue());
         listingParameters.addFilterAttributes("jobId", jobId.toString());
 
-        return legacyController.listExecutions(listingParameters).getResults().stream().map(e -> map(e)).collect(Collectors.toList());
+        return legacyController.listExecutions(listingParameters).getResults().stream().map(e -> LegacyExecution.map(e)).collect(Collectors.toList());
     }
 
     @Override
@@ -79,8 +54,9 @@ public class LegacyExecutionPersistence implements ExecutionPersistence {
         params.addFilterAttributes("jobId", jobId.toString());
         params.setFilter(listingParameters.getFilter());
 
-        io.coodoo.framework.listing.boundary.ListingResult<LegacyExecution> result = legacyController.listExecutions(params);
-        List<Execution> results = result.getResults().stream().map(l -> map(l)).collect(Collectors.toList());
+        io.coodoo.framework.listing.boundary.ListingResult<LegacyExecutionView> result = legacyController.listExecutionViews(params);
+
+        List<Execution> results = result.getResults().stream().map(l -> LegacyExecutionView.map(l)).collect(Collectors.toList());
 
         io.coodoo.workhorse.persistence.interfaces.listing.Metadata metadata =
                         new io.coodoo.workhorse.persistence.interfaces.listing.Metadata(result.getMetadata().getCount(), listingParameters);
@@ -90,14 +66,14 @@ public class LegacyExecutionPersistence implements ExecutionPersistence {
 
     @Override
     public List<Execution> pollNextExecutions(Long jobId, int limit) {
-        return legacyController.getNextCandidates(jobId).stream().map(e -> map(e)).collect(Collectors.toList());
+        return legacyController.getNextCandidates(jobId).stream().map(e -> LegacyExecution.map(e)).collect(Collectors.toList());
     }
 
     @Override
     public Execution persist(Execution execution) {
-        return map(legacyController.createJobExecution(execution.getJobId(), execution.getStatus(), execution.isPriority(), execution.getPlannedFor(),
-                        execution.getBatchId(), execution.getChainId(), execution.getParameters(), execution.getParametersHash(), execution.getFailRetry(),
-                        execution.getFailRetryExecutionId()));
+        return LegacyExecution.map(legacyController.createJobExecution(execution.getJobId(), execution.getStatus(), execution.isPriority(),
+                        execution.getPlannedFor(), execution.getBatchId(), execution.getChainId(), execution.getParameters(), execution.getParametersHash(),
+                        execution.getFailRetry(), execution.getFailRetryExecutionId()));
     }
 
     @Override
@@ -107,14 +83,14 @@ public class LegacyExecutionPersistence implements ExecutionPersistence {
 
     @Override
     public Execution update(Execution execution) {
-        return map(legacyController.updateJobExecution(execution.getId(), execution.getStatus(), execution.getParameters(), execution.isPriority(),
-                        execution.getPlannedFor(), execution.getFailRetry(), execution.getBatchId(), execution.getChainId(), execution.getDuration(),
-                        execution.getStartedAt(), execution.getEndedAt(), execution.getFailRetryExecutionId()));
+        return LegacyExecution.map(legacyController.updateJobExecution(execution.getId(), execution.getStatus(), execution.getParameters(),
+                        execution.isPriority(), execution.getPlannedFor(), execution.getFailRetry(), execution.getBatchId(), execution.getChainId(),
+                        execution.getDuration(), execution.getStartedAt(), execution.getEndedAt(), execution.getFailRetryExecutionId()));
     }
 
     @Override
     public Execution updateStatus(Long jobId, Long executionId, ExecutionStatus status, ExecutionFailStatus failStatus) {
-        return map(legacyController.updateJobExecutionStatus(executionId, status));
+        return LegacyExecution.map(legacyController.updateJobExecutionStatus(executionId, status));
     }
 
     @Override
@@ -124,17 +100,17 @@ public class LegacyExecutionPersistence implements ExecutionPersistence {
 
     @Override
     public List<Execution> getBatch(Long jobId, Long batchId) {
-        return legacyController.getJobExecutionBatch(batchId).stream().map(e -> map(e)).collect(Collectors.toList());
+        return legacyController.getJobExecutionBatch(batchId).stream().map(e -> LegacyExecution.map(e)).collect(Collectors.toList());
     }
 
     @Override
     public List<Execution> getChain(Long jobId, Long chainId) {
-        return legacyController.getJobExecutionChain(chainId).stream().map(e -> map(e)).collect(Collectors.toList());
+        return legacyController.getJobExecutionChain(chainId).stream().map(e -> LegacyExecution.map(e)).collect(Collectors.toList());
     }
 
     @Override
     public Execution getFirstCreatedByJobIdAndParametersHash(Long jobId, Integer parameterHash) {
-        return map(legacyController.getFirstCreatedByJobIdAndParametersHash(jobId, parameterHash));
+        return LegacyExecution.map(legacyController.getFirstCreatedByJobIdAndParametersHash(jobId, parameterHash));
     }
 
     @Override
@@ -149,7 +125,7 @@ public class LegacyExecutionPersistence implements ExecutionPersistence {
 
     @Override
     public List<Execution> findTimeoutExecutions(LocalDateTime time) {
-        return legacyController.findZombies(time).stream().map(e -> map(e)).collect(Collectors.toList());
+        return legacyController.findZombies(time).stream().map(e -> LegacyExecution.map(e)).collect(Collectors.toList());
     }
 
     @Override
@@ -198,7 +174,7 @@ public class LegacyExecutionPersistence implements ExecutionPersistence {
 
     @Override
     public List<JobExecutionStatusSummary> getJobExecutionStatusSummaries(ExecutionStatus status, LocalDateTime since) {
-    	return legacyController.getJobExecutionStatusSummaries(status, since);
+        return legacyController.getJobExecutionStatusSummaries(status, since);
     }
 
 }

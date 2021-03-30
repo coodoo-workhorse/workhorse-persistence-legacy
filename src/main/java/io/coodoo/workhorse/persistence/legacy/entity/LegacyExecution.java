@@ -14,6 +14,8 @@ import javax.persistence.Query;
 import javax.persistence.Table;
 
 import io.coodoo.framework.jpa.entity.AbstractIdCreatedUpdatedAtEntity;
+import io.coodoo.workhorse.core.entity.Execution;
+import io.coodoo.workhorse.core.entity.ExecutionFailStatus;
 import io.coodoo.workhorse.core.entity.ExecutionStatus;
 import io.coodoo.workhorse.util.WorkhorseUtil;
 
@@ -299,6 +301,31 @@ public class LegacyExecution extends AbstractIdCreatedUpdatedAtEntity {
                         + duration + ", priority=" + priority + ", maturity=" + maturity + ", batchId=" + batchId + ", chainId=" + chainId
                         + ", chainPreviousExecutionId=" + chainPreviousExecutionId + ", parameters=" + parameters + ", parametersHash=" + parametersHash
                         + ", failRetry=" + failRetry + ", failRetryExecutionId=" + failRetryExecutionId + ", failMessage=" + failMessage + "]";
+    }
+
+    public static Execution map(LegacyExecution jobExecution) {
+        if (jobExecution == null) {
+            return null;
+        }
+        Execution execution = new Execution();
+        execution.setId(jobExecution.getId());
+        execution.setJobId(jobExecution.getJobId());
+        execution.setStatus(jobExecution.getStatus());
+        execution.setFailStatus(ExecutionFailStatus.NONE);
+        execution.setStartedAt(jobExecution.getStartedAt());
+        execution.setEndedAt(jobExecution.getEndedAt());
+        execution.setDuration(jobExecution.getDuration());
+        execution.setPriority(jobExecution.isPriority());
+        execution.setPlannedFor(jobExecution.getMaturity());
+        execution.setBatchId(jobExecution.getBatchId());
+        execution.setChainId(jobExecution.getChainId());
+        execution.setParameters(jobExecution.getParameters());
+        execution.setParametersHash(jobExecution.getParametersHash());
+        execution.setFailRetry(jobExecution.getFailRetry());
+        execution.setFailRetryExecutionId(jobExecution.getFailRetryExecutionId());
+        execution.setCreatedAt(jobExecution.getCreatedAt());
+        execution.setUpdatedAt(jobExecution.getUpdatedAt());
+        return execution;
     }
 
     /**

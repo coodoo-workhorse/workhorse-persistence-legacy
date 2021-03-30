@@ -28,30 +28,7 @@ public class LegacyJobPersistence implements JobPersistence {
 
     @Override
     public Job get(Long jobId) {
-        return map(legacyController.getJobById(jobId));
-    }
-
-    private Job map(LegacyJob legacyJob) {
-        if (legacyJob == null) {
-            return null;
-        }
-        Job job = new Job();
-        job.setId(legacyJob.getId());
-        job.setName(legacyJob.getName());
-        job.setDescription(legacyJob.getDescription());
-        job.setWorkerClassName(legacyJob.getWorkerClassName());
-        job.setParametersClassName(legacyJob.getParametersClassName());
-        job.setStatus(legacyJob.getStatus());
-        job.setThreads(legacyJob.getThreads());
-        job.setMaxPerMinute(legacyJob.getMaxPerMinute());
-        job.setFailRetries(legacyJob.getFailRetries());
-        job.setRetryDelay(legacyJob.getRetryDelay());
-        job.setMinutesUntilCleanUp(legacyJob.getDaysUntilCleanUp() / 24 / 60);
-        job.setUniqueQueued(legacyJob.isUniqueInQueue());
-        job.setSchedule(legacyJob.getSchedule());
-        job.setCreatedAt(legacyJob.getCreatedAt());
-        job.setUpdatedAt(legacyJob.getUpdatedAt());
-        return job;
+        return LegacyJob.map(legacyController.getJobById(jobId));
     }
 
     @Override
@@ -64,7 +41,7 @@ public class LegacyJobPersistence implements JobPersistence {
 
         ListingResult<LegacyJob> result = legacyController.listJobs(params);
 
-        List<Job> results = result.getResults().stream().map(l -> map(l)).collect(Collectors.toList());
+        List<Job> results = result.getResults().stream().map(l -> LegacyJob.map(l)).collect(Collectors.toList());
 
         io.coodoo.workhorse.persistence.interfaces.listing.Metadata metadata =
                         new io.coodoo.workhorse.persistence.interfaces.listing.Metadata(result.getMetadata().getCount(), listingParameters);
@@ -74,27 +51,27 @@ public class LegacyJobPersistence implements JobPersistence {
 
     @Override
     public Job getByName(String jobName) {
-        return map(legacyController.getJobByClassName(jobName));
+        return LegacyJob.map(legacyController.getJobByClassName(jobName));
     }
 
     @Override
     public Job getByWorkerClassName(String jobClassName) {
-        return map(legacyController.getJobByClassName(jobClassName));
+        return LegacyJob.map(legacyController.getJobByClassName(jobClassName));
     }
 
     @Override
     public List<Job> getAll() {
-        return legacyController.getAllJobs().stream().map(j -> map(j)).collect(Collectors.toList());
+        return legacyController.getAllJobs().stream().map(j -> LegacyJob.map(j)).collect(Collectors.toList());
     }
 
     @Override
     public List<Job> getAllByStatus(JobStatus jobStatus) {
-        return legacyController.getAllByStatus(jobStatus).stream().map(j -> map(j)).collect(Collectors.toList());
+        return legacyController.getAllByStatus(jobStatus).stream().map(j -> LegacyJob.map(j)).collect(Collectors.toList());
     }
 
     @Override
     public List<Job> getAllScheduled() {
-        return legacyController.getAllScheduledJobs().stream().map(j -> map(j)).collect(Collectors.toList());
+        return legacyController.getAllScheduledJobs().stream().map(j -> LegacyJob.map(j)).collect(Collectors.toList());
     }
 
     @Override
@@ -113,7 +90,7 @@ public class LegacyJobPersistence implements JobPersistence {
         LegacyJob createJob = legacyController.createJob(job.getName(), job.getDescription(), job.getTags(), job.getWorkerClassName(),
                         job.getParametersClassName(), job.getSchedule(), job.getStatus(), job.getThreads(), job.getMaxPerMinute(), job.getFailRetries(),
                         job.getRetryDelay(), daysuntilCleanup, job.isUniqueQueued());
-        return map(createJob);
+        return LegacyJob.map(createJob);
     }
 
     @Override
@@ -122,7 +99,7 @@ public class LegacyJobPersistence implements JobPersistence {
         LegacyJob createJob = legacyController.updateJob(job.getId(), job.getName(), job.getDescription(), job.getTags(), job.getWorkerClassName(),
                         job.getSchedule(), job.getStatus(), job.getThreads(), job.getMaxPerMinute(), job.getFailRetries(), job.getRetryDelay(),
                         daysuntilCleanup, job.isUniqueQueued());
-        return map(createJob);
+        return LegacyJob.map(createJob);
     }
 
     @Override

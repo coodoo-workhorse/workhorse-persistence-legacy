@@ -14,6 +14,8 @@ import javax.persistence.Table;
 
 import io.coodoo.framework.jpa.entity.AbstractIdCreatedUpdatedAtEntity;
 import io.coodoo.workhorse.core.entity.ExecutionStatus;
+import io.coodoo.workhorse.core.entity.WorkhorseConfig;
+import io.coodoo.workhorse.persistence.legacy.boundary.LegacyPersistenceConfig;
 
 /**
  * Basic configuration<br>
@@ -253,6 +255,25 @@ public class LegacyConfig extends AbstractIdCreatedUpdatedAtEntity {
         builder.append(logErrorMarker);
         builder.append("]");
         return builder.toString();
+    }
+
+    public static WorkhorseConfig map(LegacyConfig config) {
+        if (config == null) {
+            return null;
+        }
+        WorkhorseConfig workhorseConfig = new LegacyPersistenceConfig();
+        workhorseConfig.setTimeZone(config.getTimeZone());
+        workhorseConfig.setBufferMax(config.getJobQueueMax());
+        workhorseConfig.setBufferMin(config.getJobQueueMin());
+        workhorseConfig.setBufferPollInterval(config.getJobQueuePollerInterval());
+        workhorseConfig.setBufferPushFallbackPollInterval(config.getJobQueuePollerInterval());
+        workhorseConfig.setMinutesUntilCleanup(LegacyPersistenceConfig.MINUTES_UNTIL_CLEANUP);
+        workhorseConfig.setLogChange(config.getLogChange());
+        workhorseConfig.setLogTimeFormat(config.getLogTimeFormatter());
+        workhorseConfig.setLogInfoMarker(config.getLogInfoMarker());
+        workhorseConfig.setLogWarnMarker(config.getLogWarnMarker());
+        workhorseConfig.setLogErrorMarker(config.getLogErrorMarker());
+        return workhorseConfig;
     }
 
     /**

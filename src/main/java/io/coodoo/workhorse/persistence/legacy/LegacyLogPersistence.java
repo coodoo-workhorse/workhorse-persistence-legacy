@@ -27,27 +27,7 @@ public class LegacyLogPersistence implements LogPersistence {
 
     @Override
     public WorkhorseLog get(Long logId) {
-        return map(legacyController.getLog(logId));
-    }
-
-    private WorkhorseLog map(LegacyLog log) {
-        if (log == null) {
-            return null;
-        }
-        WorkhorseLog workhorseLog = new WorkhorseLog();
-        workhorseLog.setId(log.getId());
-        workhorseLog.setMessage(log.getMessage());
-        workhorseLog.setJobId(log.getJobId());
-        workhorseLog.setJobStatus(log.getJobStatus());
-        workhorseLog.setByUser(log.isByUser());
-        workhorseLog.setChangeParameter(log.getChangeParameter());
-        workhorseLog.setChangeOld(log.getChangeOld());
-        workhorseLog.setChangeNew(log.getChangeNew());
-        workhorseLog.setHostName(log.getHostName());
-        workhorseLog.setStacktrace(log.getStacktrace());
-        workhorseLog.setCreatedAt(log.getCreatedAt());
-        workhorseLog.setUpdatedAt(log.getUpdatedAt());
-        return workhorseLog;
+        return LegacyLog.map(legacyController.getLog(logId));
     }
 
     @Override
@@ -58,7 +38,7 @@ public class LegacyLogPersistence implements LogPersistence {
         params.setFilter(listingParameters.getFilter());
 
         io.coodoo.framework.listing.boundary.ListingResult<LegacyLog> result = legacyController.listLogs(params);
-        List<WorkhorseLog> results = result.getResults().stream().map(l -> map(l)).collect(Collectors.toList());
+        List<WorkhorseLog> results = result.getResults().stream().map(l -> LegacyLog.map(l)).collect(Collectors.toList());
 
         io.coodoo.workhorse.persistence.interfaces.listing.Metadata metadata =
                         new io.coodoo.workhorse.persistence.interfaces.listing.Metadata(result.getMetadata().getCount(), listingParameters);
@@ -73,18 +53,19 @@ public class LegacyLogPersistence implements LogPersistence {
 
     @Override
     public WorkhorseLog delete(Long logId) {
-        return map(legacyController.deleteLogsById(logId));
+        return LegacyLog.map(legacyController.deleteLogsById(logId));
     }
 
     @Override
     public WorkhorseLog persist(WorkhorseLog workhorseLog) {
-        return map(legacyController.createLog(workhorseLog.getMessage(), workhorseLog.getJobId(), workhorseLog.getJobStatus(), workhorseLog.isByUser(),
-                        workhorseLog.getChangeParameter(), workhorseLog.getChangeOld(), workhorseLog.getChangeNew(), workhorseLog.getStacktrace()));
+        return LegacyLog.map(legacyController.createLog(workhorseLog.getMessage(), workhorseLog.getJobId(), workhorseLog.getJobStatus(),
+                        workhorseLog.isByUser(), workhorseLog.getChangeParameter(), workhorseLog.getChangeOld(), workhorseLog.getChangeNew(),
+                        workhorseLog.getStacktrace()));
     }
 
     @Override
     public List<WorkhorseLog> getAll(int limit) {
-        return legacyController.listLogs(new ListingParameters(limit)).getResults().stream().map(l -> map(l)).collect(Collectors.toList());
+        return legacyController.listLogs(new ListingParameters(limit)).getResults().stream().map(l -> LegacyLog.map(l)).collect(Collectors.toList());
     }
 
     @Override

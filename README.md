@@ -40,6 +40,7 @@ Before you begin, ensure you have met the following requirements:
    ```xml
 	<class>io.coodoo.workhorse.persistence.legacy.entity.LegacyJob</class>
 	<class>io.coodoo.workhorse.persistence.legacy.entity.LegacyExecution</class>
+	<class>io.coodoo.workhorse.persistence.legacy.entity.LegacyExecutionView</class>
 	<class>io.coodoo.workhorse.persistence.legacy.entity.LegacyConfig</class>
 	<class>io.coodoo.workhorse.persistence.legacy.entity.LegacyLog</class>
    ```

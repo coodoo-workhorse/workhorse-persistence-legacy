@@ -16,6 +16,7 @@ import javax.persistence.Table;
 
 import io.coodoo.framework.jpa.entity.AbstractIdOccCreatedUpdatedAtEntity;
 import io.coodoo.framework.listing.boundary.annotation.ListingFilterAsString;
+import io.coodoo.workhorse.core.entity.Job;
 import io.coodoo.workhorse.core.entity.JobStatus;
 
 /**
@@ -222,6 +223,29 @@ public class LegacyJob extends AbstractIdOccCreatedUpdatedAtEntity {
         builder.append(uniqueInQueue);
         builder.append("]");
         return builder.toString();
+    }
+
+    public static Job map(LegacyJob legacyJob) {
+        if (legacyJob == null) {
+            return null;
+        }
+        Job job = new Job();
+        job.setId(legacyJob.getId());
+        job.setName(legacyJob.getName());
+        job.setDescription(legacyJob.getDescription());
+        job.setWorkerClassName(legacyJob.getWorkerClassName());
+        job.setParametersClassName(legacyJob.getParametersClassName());
+        job.setStatus(legacyJob.getStatus());
+        job.setThreads(legacyJob.getThreads());
+        job.setMaxPerMinute(legacyJob.getMaxPerMinute());
+        job.setFailRetries(legacyJob.getFailRetries());
+        job.setRetryDelay(legacyJob.getRetryDelay());
+        job.setMinutesUntilCleanUp(legacyJob.getDaysUntilCleanUp() / 24 / 60);
+        job.setUniqueQueued(legacyJob.isUniqueInQueue());
+        job.setSchedule(legacyJob.getSchedule());
+        job.setCreatedAt(legacyJob.getCreatedAt());
+        job.setUpdatedAt(legacyJob.getUpdatedAt());
+        return job;
     }
 
     /**

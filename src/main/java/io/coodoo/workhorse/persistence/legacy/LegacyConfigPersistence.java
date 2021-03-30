@@ -25,26 +25,7 @@ public class LegacyConfigPersistence implements ConfigPersistence {
     @Override
     public WorkhorseConfig get() {
         LegacyConfig config = legacyController.getConfig();
-        return mapConfig(config);
-    }
-
-    private WorkhorseConfig mapConfig(LegacyConfig config) {
-        if (config == null) {
-            return null;
-        }
-        WorkhorseConfig workhorseConfig = new LegacyPersistenceConfig();
-        workhorseConfig.setTimeZone(config.getTimeZone());
-        workhorseConfig.setBufferMax(config.getJobQueueMax());
-        workhorseConfig.setBufferMin(config.getJobQueueMin());
-        workhorseConfig.setBufferPollInterval(config.getJobQueuePollerInterval());
-        workhorseConfig.setBufferPushFallbackPollInterval(config.getJobQueuePollerInterval());
-        workhorseConfig.setMinutesUntilCleanup(LegacyPersistenceConfig.MINUTES_UNTIL_CLEANUP);
-        workhorseConfig.setLogChange(config.getLogChange());
-        workhorseConfig.setLogTimeFormat(config.getLogTimeFormatter());
-        workhorseConfig.setLogInfoMarker(config.getLogInfoMarker());
-        workhorseConfig.setLogWarnMarker(config.getLogWarnMarker());
-        workhorseConfig.setLogErrorMarker(config.getLogErrorMarker());
-        return workhorseConfig;
+        return LegacyConfig.map(config);
     }
 
     @Override
@@ -55,7 +36,7 @@ public class LegacyConfigPersistence implements ConfigPersistence {
                         workhorseConfig.getExecutionTimeoutStatus(), 0, 0, workhorseConfig.getLogChange(), workhorseConfig.getLogTimeFormat(),
                         workhorseConfig.getLogInfoMarker(), workhorseConfig.getLogWarnMarker(), workhorseConfig.getLogErrorMarker());
 
-        return mapConfig(config);
+        return LegacyConfig.map(config);
     }
 
     @Override

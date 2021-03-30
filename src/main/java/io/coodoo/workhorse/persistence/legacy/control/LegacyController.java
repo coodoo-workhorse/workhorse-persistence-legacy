@@ -25,6 +25,7 @@ import io.coodoo.workhorse.core.entity.JobStatus;
 import io.coodoo.workhorse.persistence.legacy.boundary.JobEngineEntityManager;
 import io.coodoo.workhorse.persistence.legacy.entity.LegacyConfig;
 import io.coodoo.workhorse.persistence.legacy.entity.LegacyExecution;
+import io.coodoo.workhorse.persistence.legacy.entity.LegacyExecutionView;
 import io.coodoo.workhorse.persistence.legacy.entity.LegacyJob;
 import io.coodoo.workhorse.persistence.legacy.entity.LegacyLog;
 import io.coodoo.workhorse.util.WorkhorseUtil;
@@ -79,6 +80,10 @@ public class LegacyController {
 
     public ListingResult<LegacyExecution> listExecutions(ListingParameters listingParameters) {
         return Listing.getListingResult(entityManager, LegacyExecution.class, listingParameters);
+    }
+
+    public ListingResult<LegacyExecutionView> listExecutionViews(ListingParameters listingParameters) {
+        return Listing.getListingResult(entityManager, LegacyExecutionView.class, listingParameters);
     }
 
     public ListingResult<LegacyJob> listJobs(ListingParameters listingParameters) {

@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import io.coodoo.framework.jpa.entity.AbstractIdCreatedUpdatedAtEntity;
 import io.coodoo.workhorse.core.entity.JobStatus;
+import io.coodoo.workhorse.core.entity.WorkhorseLog;
 
 /**
  * A log to record changes on jobs
@@ -183,6 +184,26 @@ public class LegacyLog extends AbstractIdCreatedUpdatedAtEntity {
         builder.append(stacktrace != null);
         builder.append("]");
         return builder.toString();
+    }
+
+    public static WorkhorseLog map(LegacyLog log) {
+        if (log == null) {
+            return null;
+        }
+        WorkhorseLog workhorseLog = new WorkhorseLog();
+        workhorseLog.setId(log.getId());
+        workhorseLog.setMessage(log.getMessage());
+        workhorseLog.setJobId(log.getJobId());
+        workhorseLog.setJobStatus(log.getJobStatus());
+        workhorseLog.setByUser(log.isByUser());
+        workhorseLog.setChangeParameter(log.getChangeParameter());
+        workhorseLog.setChangeOld(log.getChangeOld());
+        workhorseLog.setChangeNew(log.getChangeNew());
+        workhorseLog.setHostName(log.getHostName());
+        workhorseLog.setStacktrace(log.getStacktrace());
+        workhorseLog.setCreatedAt(log.getCreatedAt());
+        workhorseLog.setUpdatedAt(log.getUpdatedAt());
+        return workhorseLog;
     }
 
     /**

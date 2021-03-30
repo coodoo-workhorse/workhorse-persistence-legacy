@@ -183,11 +183,6 @@ LEFT JOIN jobengine_job job ON log.job_id = job.id;
 CREATE VIEW jobengine_execution_view AS
 SELECT ex.id,
   ex.job_id,
-  job.name AS job_name,
-  job.description AS job_description,
-  job.status AS job_status,
-  job.fail_retries AS job_fail_retries,
-  job.threads AS job_threads,
   ex.status,
   ex.started_at,
   ex.ended_at,
@@ -203,8 +198,7 @@ SELECT ex.id,
   ex.fail_message,
   ex.updated_at,
   ex.created_at
-FROM jobengine_execution ex
-LEFT JOIN jobengine_job job ON ex.job_id = job.id;
+FROM jobengine_execution ex;
 
 -- CREATE VIEW jobengine_job_count_view AS
 -- SELECT 
