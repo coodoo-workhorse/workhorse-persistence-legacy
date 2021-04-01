@@ -82,6 +82,10 @@ import io.coodoo.workhorse.util.WorkhorseUtil;
                                 query = "SELECT DISTINCT j.jobId FROM LegacyExecution j WHERE j.status = :status AND j.createdAt > :since"),
                 @NamedQuery(name = "JobExecution.countByJobIdAndStatusAndSince",
                                 query = "SELECT count(j) FROM LegacyExecution j WHERE j.jobId = :jobId AND j.status = :status AND j.createdAt > :since"),
+                @NamedQuery(name = "JobExecution.countByJobIdAndStatusAndCreatedAtRange",
+                                query = "SELECT count(j) FROM LegacyExecution j WHERE j.jobId = :jobId AND j.status = :status AND j.createdAt > :from AND J.createdAt < :to"),
+                @NamedQuery(name = "JobExecution.getJobIdByCreatedAtRange",
+                                query = "SELECT DISTINCT j.jobId FROM LegacyExecution j WHERE j.createdAt > :from AND J.createdAt < :to"),
 
 })
 
@@ -687,6 +691,47 @@ public class LegacyExecution extends AbstractIdCreatedUpdatedAtEntity {
             return null;
         }
         return (Long) results.get(0);
+    }
+
+    /**
+     * Executes the query 'JobExecution.countByJobIdAndStatusAndCreatedAtRange' returning one/the first object or null if nothing has been found.
+     *
+     * @param entityManager the entityManager
+     * @param jobId the jobId
+     * @param from the from
+     * @param to the to
+     * @param status the status
+     * @return the result
+     */
+    public static Long countByJobIdAndStatusAndCreatedAtRange(EntityManager entityManager, Long jobId, LocalDateTime from, LocalDateTime to,
+                    ExecutionStatus status) {
+        Query query = entityManager.createNamedQuery("JobExecution.countByJobIdAndStatusAndCreatedAtRange");
+        query = query.setParameter("jobId", jobId);
+        query = query.setParameter("from", from);
+        query = query.setParameter("to", to);
+        query = query.setParameter("status", status);
+        query = query.setMaxResults(1);
+        @SuppressWarnings("rawtypes")
+        List results = query.getResultList();
+        if (results.isEmpty()) {
+            return null;
+        }
+        return (Long) results.get(0);
+    }
+
+    /**
+     * Executes the query 'JobExecution.getJobIdByCreatedAtRange' returning one/the first object or null if nothing has been found.
+     *
+     * @param entityManager the entityManager
+     * @param from from
+     * @param to to
+     * @return the result
+     */
+    public static List<Long> getJobIdByCreatedAtRange(EntityManager entityManager, LocalDateTime from, LocalDateTime to) {
+        Query query = entityManager.createNamedQuery("JobExecution.getJobIdByCreatedAtRange");
+        query = query.setParameter("from", from);
+        query = query.setParameter("to", to);
+        return query.getResultList();
     }
 
 }

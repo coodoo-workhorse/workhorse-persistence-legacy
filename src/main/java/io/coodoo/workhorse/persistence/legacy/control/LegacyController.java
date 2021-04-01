@@ -2,6 +2,7 @@ package io.coodoo.workhorse.persistence.legacy.control;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -20,6 +21,7 @@ import io.coodoo.framework.listing.boundary.ListingResult;
 import io.coodoo.workhorse.core.control.StaticConfig;
 import io.coodoo.workhorse.core.entity.ExecutionStatus;
 import io.coodoo.workhorse.core.entity.Job;
+import io.coodoo.workhorse.core.entity.JobExecutionCount;
 import io.coodoo.workhorse.core.entity.JobExecutionStatusSummary;
 import io.coodoo.workhorse.core.entity.JobStatus;
 import io.coodoo.workhorse.persistence.legacy.boundary.JobEngineEntityManager;
@@ -428,5 +430,48 @@ public class LegacyController {
         }
 
         return executionStatusSummaries;
+    }
+
+    public JobExecutionCount getJobExecutionCounts(Long jobId, LocalDateTime from, LocalDateTime to) {
+
+        Long countPlanned = 0L;
+        Long countQueued = 0L;
+        Long countRunning = 0L;
+        Long countFinished = 0L;
+        Long countFailed = 0L;
+        Long countAbort = 0L;
+
+        Collection<Long> jobIds = new ArrayList<>();
+
+        if (jobId == null) {
+            jobIds = LegacyExecution.getJobIdByCreatedAtRange(entityManager, from, to);
+        } else {
+
+            jobIds.add(jobId);
+        }
+
+        for (Long job : jobIds) {
+
+            countPlanned = countPlanned + LegacyExecution.countByJobIdAndStatusAndCreatedAtRange(entityManager, job, from, to, ExecutionStatus.PLANNED);
+            countQueued = countQueued + LegacyExecution.countByJobIdAndStatusAndCreatedAtRange(entityManager, job, from, to, ExecutionStatus.QUEUED);
+            countRunning = countRunning + LegacyExecution.countByJobIdAndStatusAndCreatedAtRange(entityManager, job, from, to, ExecutionStatus.RUNNING);
+            countFinished = countFinished + LegacyExecution.countByJobIdAndStatusAndCreatedAtRange(entityManager, job, from, to, ExecutionStatus.FINISHED);
+            countFailed = countFailed + LegacyExecution.countByJobIdAndStatusAndCreatedAtRange(entityManager, job, from, to, ExecutionStatus.FAILED);
+            countAbort = countAbort + LegacyExecution.countByJobIdAndStatusAndCreatedAtRange(entityManager, job, from, to, ExecutionStatus.ABORTED);
+
+        }
+
+        Long total = countRunning + countFinished + countFailed + countAbort + countPlanned + countQueued;
+
+        return new JobExecutionCount(jobId, from, to, total, countPlanned, countQueued, countRunning, countFinished, countFailed, countAbort);
+
+        // JobExecutionCounts jobExecutionCounts =
+        // JobExecutionCounts.query(entityManager, jobId, from, to);
+
+        // return new JobExecutionCount(jobId, from, WorkhorseUtil.timestamp(),
+        // jobExecutionCounts.getTotal(), jobExecutionCounts.getPlanned(),
+        // jobExecutionCounts.getQueued(), jobExecutionCounts.getRunning(),
+        // jobExecutionCounts.getFinished(), jobExecutionCounts.getFailed(),
+        // jobExecutionCounts.getAborted());
     }
 }
