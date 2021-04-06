@@ -12,6 +12,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Query;
 import javax.persistence.Table;
 
+import io.coodoo.framework.jpa.control.JpaEssentialsConfig;
 import io.coodoo.framework.jpa.entity.AbstractIdCreatedUpdatedAtEntity;
 import io.coodoo.workhorse.core.entity.ExecutionStatus;
 import io.coodoo.workhorse.core.entity.WorkhorseConfig;
@@ -263,6 +264,11 @@ public class LegacyConfig extends AbstractIdCreatedUpdatedAtEntity {
         }
         WorkhorseConfig workhorseConfig = new LegacyPersistenceConfig();
         workhorseConfig.setTimeZone(config.getTimeZone());
+
+        // the time zone used by JpaEssentialsConfig is updated to fetch the time zone
+        // used by workhorse
+        JpaEssentialsConfig.LOCAL_DATE_TIME_ZONE = config.getTimeZone();
+
         workhorseConfig.setBufferMax(config.getJobQueueMax());
         workhorseConfig.setBufferMin(config.getJobQueueMin());
         workhorseConfig.setBufferPollInterval(config.getJobQueuePollerInterval());

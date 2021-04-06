@@ -8,7 +8,6 @@ import javax.persistence.EntityManager;
 
 import io.coodoo.framework.listing.boundary.Listing;
 import io.coodoo.framework.listing.boundary.ListingParameters;
-import io.coodoo.framework.listing.boundary.ListingPredicate;
 import io.coodoo.framework.listing.boundary.Stats;
 import io.coodoo.framework.listing.boundary.Term;
 import io.coodoo.framework.listing.control.ListingConfig;
@@ -43,7 +42,6 @@ public class JobExecutionCounts {
         long fromMillis = from.atZone(ZoneId.of(StaticConfig.TIME_ZONE)).toInstant().toEpochMilli();
         long toMillis = to.atZone(ZoneId.of(StaticConfig.TIME_ZONE)).toInstant().toEpochMilli();
 
-        // int minutes = consideredLastMinutes == null ? 60 : consideredLastMinutes;
         String timeFilter = fromMillis + ListingConfig.OPERATOR_TO + toMillis;
 
         ListingParameters listingParameters = new ListingParameters();
@@ -51,12 +49,7 @@ public class JobExecutionCounts {
             listingParameters.addFilterAttributes("jobId", jobId.toString());
         }
 
-        ListingPredicate filter = new ListingPredicate().or();
-        filter.addPredicate(new ListingPredicate().filter("createdAt", timeFilter));
-        filter.addPredicate(new ListingPredicate().filter("startedAt", timeFilter));
-        filter.addPredicate(new ListingPredicate().filter("endedAt", timeFilter));
-
-        listingParameters.setPredicate(filter);
+        listingParameters.addFilterAttributes("createdAt", timeFilter);
         listingParameters.addTermsAttributes("status", "6"); // there are only five status
         listingParameters.addStatsAttributes("duration", "all");
 
