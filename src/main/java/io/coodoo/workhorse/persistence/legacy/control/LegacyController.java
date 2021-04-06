@@ -434,51 +434,6 @@ public class LegacyController {
 
     public JobExecutionCount getJobExecutionCounts(Long jobId, LocalDateTime from, LocalDateTime to) {
 
-        // long countPlanned = 0L;
-        // long countQueued = 0L;
-        // long countRunning = 0L;
-        // long countFinished = 0L;
-        // long countFailed = 0L;
-        // long countAbort = 0L;
-
-        // Collection<Long> jobIds = new ArrayList<>();
-
-        // if (jobId == null) {
-        // jobIds = LegacyExecution.getJobIdByCreatedAtRange(entityManager, from, to);
-        // } else {
-
-        // jobIds.add(jobId);
-        // }
-
-        // for (Long job : jobIds) {
-
-        // countPlanned = countPlanned +
-        // LegacyExecution.countByJobIdAndStatusAndCreatedAtRange(entityManager, job,
-        // from, to, ExecutionStatus.PLANNED);
-        // countQueued = countQueued +
-        // LegacyExecution.countByJobIdAndStatusAndCreatedAtRange(entityManager, job,
-        // from, to, ExecutionStatus.QUEUED);
-        // countRunning = countRunning +
-        // LegacyExecution.countByJobIdAndStatusAndCreatedAtRange(entityManager, job,
-        // from, to, ExecutionStatus.RUNNING);
-        // countFinished = countFinished +
-        // LegacyExecution.countByJobIdAndStatusAndCreatedAtRange(entityManager, job,
-        // from, to, ExecutionStatus.FINISHED);
-        // countFailed = countFailed +
-        // LegacyExecution.countByJobIdAndStatusAndCreatedAtRange(entityManager, job,
-        // from, to, ExecutionStatus.FAILED);
-        // countAbort = countAbort +
-        // LegacyExecution.countByJobIdAndStatusAndCreatedAtRange(entityManager, job,
-        // from, to, ExecutionStatus.ABORTED);
-
-        // }
-
-        // long total = countRunning + countFinished + countFailed + countAbort +
-        // countPlanned + countQueued;
-
-        // return new JobExecutionCount(jobId, from, to, total, countPlanned,
-        // countQueued, countRunning, countFinished, countFailed, countAbort);
-
         JobExecutionCounts jobExecutionCounts = JobExecutionCounts.query(entityManager, jobId, from, to);
 
         return new JobExecutionCount(jobId, from, to, jobExecutionCounts.getTotal(), jobExecutionCounts.getPlanned(), jobExecutionCounts.getQueued(),

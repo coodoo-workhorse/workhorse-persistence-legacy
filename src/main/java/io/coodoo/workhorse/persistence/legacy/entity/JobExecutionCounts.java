@@ -8,7 +8,6 @@ import javax.persistence.EntityManager;
 
 import io.coodoo.framework.listing.boundary.Listing;
 import io.coodoo.framework.listing.boundary.ListingParameters;
-import io.coodoo.framework.listing.boundary.Stats;
 import io.coodoo.framework.listing.boundary.Term;
 import io.coodoo.framework.listing.control.ListingConfig;
 import io.coodoo.workhorse.core.control.StaticConfig;
@@ -23,18 +22,14 @@ public class JobExecutionCounts {
     private Long finished = 0L;
     private Long failed = 0L;
     private Long aborted = 0L;
-    private Long averageDuration;
-    private Long minDuration;
-    private Long maxDuration;
-    private Long sumDuration;
 
     /**
      * Queries the current counts of {@link JobExecution} status for one specific or all jobs
      * 
      * @param entityManager persistence
      * @param jobId optional, <code>null</code> will get the counts for all
-     * @param from only executions that were created after this timestamp are considered
-     * @param to only executions that were created before this timestamp are considered
+     * @param from only executions that were created after this time stamp are considered
+     * @param to only executions that were created before this time stamp are considered
      * @return fresh counts!
      */
     public static JobExecutionCounts query(EntityManager entityManager, Long jobId, LocalDateTime from, LocalDateTime to) {
@@ -50,8 +45,7 @@ public class JobExecutionCounts {
         }
 
         listingParameters.addFilterAttributes("createdAt", timeFilter);
-        listingParameters.addTermsAttributes("status", "6"); // there are only five status
-        listingParameters.addStatsAttributes("duration", "all");
+        listingParameters.addTermsAttributes("status", "6"); // there are only six status
 
         JobExecutionCounts counts = new JobExecutionCounts();
         for (Term term : Listing.getTerms(entityManager, LegacyExecution.class, listingParameters).get("status")) {
@@ -76,20 +70,8 @@ public class JobExecutionCounts {
                     break;
             }
         }
-        Stats stats = Listing.getStats(entityManager, LegacyExecution.class, listingParameters).get("duration");
-        counts.setTotal(stats.getCount());
-        if (stats.getAvg() != null) {
-            counts.setAverageDuration(stats.getAvg().longValue());
-        }
-        if (stats.getMin() != null) {
-            counts.setMinDuration(stats.getMin().longValue());
-        }
-        if (stats.getMax() != null) {
-            counts.setMaxDuration(stats.getMax().longValue());
-        }
-        if (stats.getSum() != null) {
-            counts.setSumDuration(stats.getSum().longValue());
-        }
+
+        counts.setTotal(Listing.countListing(entityManager, LegacyExecution.class, listingParameters));
         return counts;
     }
 
@@ -149,38 +131,6 @@ public class JobExecutionCounts {
         this.aborted = aborted;
     }
 
-    public Long getAverageDuration() {
-        return averageDuration;
-    }
-
-    public void setAverageDuration(Long averageDuration) {
-        this.averageDuration = averageDuration;
-    }
-
-    public Long getMinDuration() {
-        return minDuration;
-    }
-
-    public void setMinDuration(Long minDuration) {
-        this.minDuration = minDuration;
-    }
-
-    public Long getMaxDuration() {
-        return maxDuration;
-    }
-
-    public void setMaxDuration(Long maxDuration) {
-        this.maxDuration = maxDuration;
-    }
-
-    public Long getSumDuration() {
-        return sumDuration;
-    }
-
-    public void setSumDuration(Long sumDuration) {
-        this.sumDuration = sumDuration;
-    }
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -198,14 +148,6 @@ public class JobExecutionCounts {
         builder.append(failed);
         builder.append(", aborted=");
         builder.append(aborted);
-        builder.append(", averageDuration=");
-        builder.append(averageDuration);
-        builder.append(", minDuration=");
-        builder.append(minDuration);
-        builder.append(", maxDuration=");
-        builder.append(maxDuration);
-        builder.append(", sumDuration=");
-        builder.append(sumDuration);
         builder.append("]");
         return builder.toString();
     }
