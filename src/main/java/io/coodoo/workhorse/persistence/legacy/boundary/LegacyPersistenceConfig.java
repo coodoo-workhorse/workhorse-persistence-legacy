@@ -19,9 +19,9 @@ public class LegacyPersistenceConfig extends WorkhorseConfig {
     public static final String NAME = "Legacy Persistence";
 
     /**
-     * ZoneId Object time zone for LocalDateTime instance creation. Default is UTC
+     * ZoneId Object time zone for LocalDateTime instance creation. Default is {@link ZoneId#systemDefault()}
      */
-    public static ZoneId TIME_ZONE = ZoneId.of("Europe/Berlin");
+    public static ZoneId TIME_ZONE = ZoneId.systemDefault();
 
     /**
      * Job queue poller interval in seconds
@@ -111,7 +111,7 @@ public class LegacyPersistenceConfig extends WorkhorseConfig {
 
     public LegacyPersistenceConfig() {
 
-        timeZone = "Europe/Berlin";
+        timeZone = ZoneId.systemDefault().getId();
         bufferMax = JOB_QUEUE_MAX;
         bufferMin = JOB_QUEUE_MIN;
         bufferPollInterval = JOB_QUEUE_POLLER_INTERVAL;

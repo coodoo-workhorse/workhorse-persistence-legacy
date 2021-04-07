@@ -1,5 +1,6 @@
 package io.coodoo.workhorse.persistence.legacy.entity;
 
+import java.time.ZoneId;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -36,10 +37,10 @@ public class LegacyConfig extends AbstractIdCreatedUpdatedAtEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * ZoneId Object time zone for LocalDateTime instance creation. Default is UTC
+     * ZoneId Object time zone for LocalDateTime instance creation. Default is {@link ZoneId#systemDefault()}
      */
     @Column(name = "time_zone")
-    private String timeZone = "UTC";
+    private String timeZone = ZoneId.systemDefault().getId();
 
     /**
      * Job queue poller interval in seconds
