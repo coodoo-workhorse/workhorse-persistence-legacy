@@ -436,7 +436,7 @@ public class LegacyController {
 
         JobExecutionCounts jobExecutionCounts = JobExecutionCounts.query(entityManager, jobId, from, to);
 
-        return new JobExecutionCount(jobId, from, to, jobExecutionCounts.getTotal(), jobExecutionCounts.getPlanned(), jobExecutionCounts.getQueued(),
-                        jobExecutionCounts.getRunning(), jobExecutionCounts.getFinished(), jobExecutionCounts.getFailed(), jobExecutionCounts.getAborted());
+        return new JobExecutionCount(jobId, from, to, jobExecutionCounts.getPlanned(), jobExecutionCounts.getQueued(), jobExecutionCounts.getRunning(),
+                        jobExecutionCounts.getFinished(), jobExecutionCounts.getFailed(), jobExecutionCounts.getAborted());
     }
 }
