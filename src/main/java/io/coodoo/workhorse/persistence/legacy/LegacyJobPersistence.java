@@ -10,6 +10,7 @@ import io.coodoo.framework.listing.boundary.ListingParameters;
 import io.coodoo.framework.listing.boundary.ListingResult;
 import io.coodoo.workhorse.core.entity.Job;
 import io.coodoo.workhorse.core.entity.JobStatus;
+import io.coodoo.workhorse.core.entity.JobStatusCount;
 import io.coodoo.workhorse.persistence.interfaces.JobPersistence;
 import io.coodoo.workhorse.persistence.legacy.boundary.LegacyPersistenceConfig;
 import io.coodoo.workhorse.persistence.legacy.control.LegacyController;
@@ -115,6 +116,11 @@ public class LegacyJobPersistence implements JobPersistence {
     @Override
     public String getPersistenceName() {
         return LegacyPersistenceConfig.NAME;
+    }
+
+    @Override
+    public JobStatusCount getJobStatusCount() {
+        return legacyController.getJobStatusCount();
     }
 
 }

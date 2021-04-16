@@ -17,12 +17,14 @@ import org.slf4j.LoggerFactory;
 import io.coodoo.framework.listing.boundary.Listing;
 import io.coodoo.framework.listing.boundary.ListingParameters;
 import io.coodoo.framework.listing.boundary.ListingResult;
+import io.coodoo.framework.listing.boundary.Term;
 import io.coodoo.workhorse.core.control.StaticConfig;
 import io.coodoo.workhorse.core.entity.ExecutionStatus;
 import io.coodoo.workhorse.core.entity.Job;
 import io.coodoo.workhorse.core.entity.JobExecutionCount;
 import io.coodoo.workhorse.core.entity.JobExecutionStatusSummary;
 import io.coodoo.workhorse.core.entity.JobStatus;
+import io.coodoo.workhorse.core.entity.JobStatusCount;
 import io.coodoo.workhorse.persistence.legacy.boundary.JobEngineEntityManager;
 import io.coodoo.workhorse.persistence.legacy.entity.JobExecutionCounts;
 import io.coodoo.workhorse.persistence.legacy.entity.LegacyConfig;
@@ -447,5 +449,35 @@ public class LegacyController {
 
         return new JobExecutionCount(jobId, from, to, jobExecutionCounts.getPlanned(), jobExecutionCounts.getQueued(), jobExecutionCounts.getRunning(),
                         jobExecutionCounts.getFinished(), jobExecutionCounts.getFailed(), jobExecutionCounts.getAborted());
+    }
+
+    public JobStatusCount getJobStatusCount() {
+
+        JobStatusCount jobStatusCount = new JobStatusCount();
+        ListingParameters listingParameters = new ListingParameters();
+
+        listingParameters.addTermsAttributes("status", "4");
+
+        for (Term term : Listing.getTerms(entityManager, LegacyJob.class, listingParameters).get("status")) {
+            switch ((JobStatus) term.getValue()) {
+                case ACTIVE:
+                    jobStatusCount.setActive(term.getCount());
+                    break;
+                case INACTIVE:
+                    jobStatusCount.setInactive(term.getCount());
+                    break;
+                case ERROR:
+                    jobStatusCount.setError(term.getCount());
+                    break;
+                case NO_WORKER:
+                    jobStatusCount.setNoWorker(term.getCount());
+                    break;
+
+            }
+        }
+
+        long total = jobStatusCount.getActive() + jobStatusCount.getInactive() + jobStatusCount.getError() + jobStatusCount.getNoWorker();
+        jobStatusCount.setTotal(total);
+        return jobStatusCount;
     }
 }
