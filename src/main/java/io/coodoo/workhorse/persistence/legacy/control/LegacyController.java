@@ -245,6 +245,15 @@ public class LegacyController {
         int deletedJobExecutions = LegacyExecution.deleteAllByJobId(entityManager, jobId);
         int deletedJobLogs = deleteAllLogsByJobId(jobId);
 
+        String deleteJobStatisticMinuteQuery = "DELETE FROM jobengine_statistic_minute WHERE job_id = " + jobId;
+        entityManager.createNativeQuery(deleteJobStatisticMinuteQuery).executeUpdate();
+
+        String deleteJobStatisticHourQuery = "DELETE FROM jobengine_statistic_hour WHERE job_id = " + jobId;
+        entityManager.createNativeQuery(deleteJobStatisticHourQuery).executeUpdate();
+
+        String deleteJobStatisticDayQuery = "DELETE FROM jobengine_statistic_day WHERE job_id = " + jobId;
+        entityManager.createNativeQuery(deleteJobStatisticDayQuery).executeUpdate();
+
         entityManager.remove(job);
 
         String logMessage = String.format("Job removed (including %d executions and %d logs): %s", deletedJobExecutions, deletedJobLogs, job.toString());

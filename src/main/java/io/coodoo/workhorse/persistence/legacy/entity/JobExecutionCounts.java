@@ -6,14 +6,18 @@ import java.time.ZoneId;
 import javax.batch.runtime.JobExecution;
 import javax.persistence.EntityManager;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.coodoo.framework.listing.boundary.Listing;
 import io.coodoo.framework.listing.boundary.ListingParameters;
 import io.coodoo.framework.listing.boundary.Term;
 import io.coodoo.framework.listing.control.ListingConfig;
-import io.coodoo.workhorse.core.control.StaticConfig;
 import io.coodoo.workhorse.core.entity.ExecutionStatus;
 
 public class JobExecutionCounts {
+
+    private final static Logger logger = LoggerFactory.getLogger(JobExecutionCounts.class);
 
     private Long total = 0L;
     private Long planned = 0L;
@@ -34,15 +38,22 @@ public class JobExecutionCounts {
      */
     public static JobExecutionCounts query(EntityManager entityManager, Long jobId, LocalDateTime from, LocalDateTime to) {
 
-        long fromMillis = from.atZone(ZoneId.of(StaticConfig.TIME_ZONE)).toInstant().toEpochMilli();
-        long toMillis = to.atZone(ZoneId.of(StaticConfig.TIME_ZONE)).toInstant().toEpochMilli();
-
-        String timeFilter = fromMillis + ListingConfig.OPERATOR_TO + toMillis;
-
         ListingParameters listingParameters = new ListingParameters();
         if (jobId != null) {
             listingParameters.addFilterAttributes("jobId", jobId.toString());
         }
+
+        // The ZoneId to use in this case is UTC. So the method toEpochMilli() don't
+        // have to convert the given time in the used TimeZone.
+        // InstInstead, if the local time zone is used, the convertion will be proceed.
+        // But the listing framework has to make the convertion itself.
+        // Something that do not happen. It is the reason, why no convertion in local
+        // time zone have to be proceeded here.
+
+        long fromMillis = from.atZone(ZoneId.of("UTC")).toInstant().toEpochMilli();
+        long toMillis = to.atZone(ZoneId.of("UTC")).toInstant().toEpochMilli();
+
+        String timeFilter = fromMillis + ListingConfig.OPERATOR_TO + toMillis;
 
         listingParameters.addFilterAttributes("createdAt", timeFilter);
         listingParameters.addTermsAttributes("status", "6"); // there are only six status
@@ -71,7 +82,6 @@ public class JobExecutionCounts {
             }
         }
 
-        counts.setTotal(Listing.countListing(entityManager, LegacyExecution.class, listingParameters));
         return counts;
     }
 
