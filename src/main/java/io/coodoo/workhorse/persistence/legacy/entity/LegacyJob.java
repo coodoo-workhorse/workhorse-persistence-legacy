@@ -240,7 +240,13 @@ public class LegacyJob extends AbstractIdOccCreatedUpdatedAtEntity {
         job.setMaxPerMinute(legacyJob.getMaxPerMinute());
         job.setFailRetries(legacyJob.getFailRetries());
         job.setRetryDelay(legacyJob.getRetryDelay());
-        job.setMinutesUntilCleanUp(legacyJob.getDaysUntilCleanUp() / 24 / 60);
+
+        // The Engine this value as minute unit to persist.
+        // But the DB has been configured to store this value as day unit.
+        // It is the reason why a convertion has to be proceed here.
+        // from days to minutes
+        job.setMinutesUntilCleanUp(legacyJob.getDaysUntilCleanUp() * 24 * 60);
+
         job.setUniqueQueued(legacyJob.isUniqueInQueue());
         job.setSchedule(legacyJob.getSchedule());
         job.setCreatedAt(legacyJob.getCreatedAt());

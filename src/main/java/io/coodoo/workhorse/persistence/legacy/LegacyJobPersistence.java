@@ -87,7 +87,12 @@ public class LegacyJobPersistence implements JobPersistence {
 
     @Override
     public Job persist(Job job) {
-        int daysuntilCleanup = job.getMinutesUntilCleanUp() * 24 * 60;
+
+        // The Engine this value as minute unit to persist.
+        // But the DB has been configured to store this value as day unit.
+        // It is the reason why a convertion has to be proceed here.
+        // from minutes to days
+        int daysuntilCleanup = job.getMinutesUntilCleanUp() / 60 / 24;
         LegacyJob createJob = legacyController.createJob(job.getName(), job.getDescription(), job.getTags(), job.getWorkerClassName(),
                         job.getParametersClassName(), job.getSchedule(), job.getStatus(), job.getThreads(), job.getMaxPerMinute(), job.getFailRetries(),
                         job.getRetryDelay(), daysuntilCleanup, job.isUniqueQueued());
@@ -96,7 +101,12 @@ public class LegacyJobPersistence implements JobPersistence {
 
     @Override
     public Job update(Job job) {
-        int daysuntilCleanup = job.getMinutesUntilCleanUp() * 24 * 60;
+
+        // The Engine this value as minute unit to persist.
+        // But the DB has been configured to store this value as day unit.
+        // It is the reason why a convertion has to be proceed here.
+        // from minutes to days
+        int daysuntilCleanup = job.getMinutesUntilCleanUp() / 60 / 24;
         LegacyJob createJob = legacyController.updateJob(job.getId(), job.getName(), job.getDescription(), job.getTags(), job.getWorkerClassName(),
                         job.getSchedule(), job.getStatus(), job.getThreads(), job.getMaxPerMinute(), job.getFailRetries(), job.getRetryDelay(),
                         daysuntilCleanup, job.isUniqueQueued());
