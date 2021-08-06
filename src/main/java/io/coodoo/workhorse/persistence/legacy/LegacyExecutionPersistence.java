@@ -86,7 +86,8 @@ public class LegacyExecutionPersistence implements ExecutionPersistence {
     public Execution update(Execution execution) {
         return LegacyExecution.map(legacyController.updateJobExecution(execution.getId(), execution.getStatus(), execution.getParameters(),
                         execution.isPriority(), execution.getPlannedFor(), execution.getFailRetry(), execution.getBatchId(), execution.getChainId(),
-                        execution.getDuration(), execution.getStartedAt(), execution.getEndedAt(), execution.getFailRetryExecutionId()));
+                        execution.getDuration(), execution.getStartedAt(), execution.getEndedAt(), execution.getFailRetryExecutionId(),
+                        execution.getSummary()));
     }
 
     @Override

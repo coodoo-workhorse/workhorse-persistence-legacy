@@ -43,6 +43,9 @@ public class LegacyExecutionView extends AbstractIdCreatedUpdatedAtEntity {
     @Column(name = "maturity")
     private LocalDateTime maturity;
 
+    @Column(name = "summary")
+    private String summary;
+
     @Column(name = "batch_id")
     private Long batchId;
 
@@ -113,6 +116,14 @@ public class LegacyExecutionView extends AbstractIdCreatedUpdatedAtEntity {
 
     public void setMaturity(LocalDateTime maturity) {
         this.maturity = maturity;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
     public Long getBatchId() {
@@ -232,6 +243,7 @@ public class LegacyExecutionView extends AbstractIdCreatedUpdatedAtEntity {
         execution.setStartedAt(jobExecution.getStartedAt());
         execution.setEndedAt(jobExecution.getEndedAt());
         execution.setDuration(jobExecution.getDuration());
+        execution.setSummary(jobExecution.getSummary());
         execution.setPriority(jobExecution.isPriority());
         execution.setPlannedFor(jobExecution.getMaturity());
         execution.setBatchId(jobExecution.getBatchId());
