@@ -359,13 +359,15 @@ public class LegacyController {
     }
 
     public LegacyExecution updateJobExecution(Long jobExecutionId, ExecutionStatus status, String parameters, boolean priority, LocalDateTime maturity,
-                    int fails, Long batchId, Long chainId, Long duration, LocalDateTime startedAt, LocalDateTime endedAt, Long failRetryExecutionId) {
+                    int fails, Long batchId, Long chainId, Long duration, LocalDateTime startedAt, LocalDateTime endedAt, Long failRetryExecutionId,
+                    String summary) {
 
         LegacyExecution jobExecution = getJobExecutionById(jobExecutionId);
         jobExecution.setStatus(status);
         jobExecution.setParameters(parameters);
         jobExecution.setPriority(priority);
         jobExecution.setMaturity(maturity);
+        jobExecution.setSummary(summary);
         jobExecution.setBatchId(batchId);
         jobExecution.setChainId(chainId);
         jobExecution.setDuration(duration);

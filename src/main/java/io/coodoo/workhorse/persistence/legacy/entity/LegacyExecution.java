@@ -123,6 +123,12 @@ public class LegacyExecution extends AbstractIdCreatedUpdatedAtEntity {
     @Column(name = "maturity")
     private LocalDateTime maturity;
 
+    /**
+     * A short message to summarize an execution.
+     */
+    @Column(name = "summary")
+    private String summary;
+
     @Column(name = "batch_id")
     private Long batchId;
 
@@ -213,6 +219,14 @@ public class LegacyExecution extends AbstractIdCreatedUpdatedAtEntity {
 
     public void setMaturity(LocalDateTime maturity) {
         this.maturity = maturity;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
     public Long getBatchId() {
