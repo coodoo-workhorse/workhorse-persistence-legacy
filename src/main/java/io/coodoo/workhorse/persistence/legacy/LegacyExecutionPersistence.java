@@ -184,4 +184,14 @@ public class LegacyExecutionPersistence implements ExecutionPersistence {
         return legacyController.getJobExecutionCounts(jobId, from, to);
     }
 
+    @Override
+    public void subscribe() {
+        // Not supported by the legacy persistence
+    }
+
+    @Override
+    public void unsubscribe() {
+        // Not supported by the legacy persistence
+    }
+
 }
