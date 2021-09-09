@@ -26,6 +26,11 @@ public class LegacyLogPersistence implements LogPersistence {
     LegacyController legacyController;
 
     @Override
+    public String getPersistenceName() {
+        return LegacyPersistenceConfig.NAME;
+    }
+
+    @Override
     public WorkhorseLog get(Long logId) {
         return LegacyLog.map(legacyController.getLog(logId));
     }
@@ -71,16 +76,6 @@ public class LegacyLogPersistence implements LogPersistence {
     @Override
     public int deleteByJobId(Long jobId) {
         return legacyController.deleteAllLogsByJobId(jobId);
-    }
-
-    @Override
-    public String getPersistenceName() {
-        return LegacyPersistenceConfig.NAME;
-    }
-
-    @Override
-    public void connect(Object... params) {
-        // TODO ?!
     }
 
 }

@@ -23,6 +23,19 @@ public class LegacyConfigPersistence implements ConfigPersistence {
     LegacyController legacyController;
 
     @Override
+    public String getPersistenceName() {
+        return legacyPersistenceConfig.getPersistenceName();
+    }
+
+    @Override
+    public String getPersistenceVersion() {
+        return legacyPersistenceConfig.getPersistenceVersion();
+    }
+
+    @Override
+    public void initialize(Object... params) {}
+
+    @Override
     public WorkhorseConfig get() {
         LegacyConfig config = legacyController.getConfig();
         return LegacyConfig.map(config);
@@ -37,21 +50,6 @@ public class LegacyConfigPersistence implements ConfigPersistence {
                         workhorseConfig.getLogInfoMarker(), workhorseConfig.getLogWarnMarker(), workhorseConfig.getLogErrorMarker());
 
         return LegacyConfig.map(config);
-    }
-
-    @Override
-    public void connect(Object... params) {
-        // TODO ?!
-    }
-
-    @Override
-    public String getPersistenceName() {
-        return legacyPersistenceConfig.getPersistenceName();
-    }
-
-    @Override
-    public String getPersistenceVersion() {
-        return legacyPersistenceConfig.getPersistenceVersion();
     }
 
 }

@@ -33,6 +33,11 @@ public class LegacyExecutionPersistence implements ExecutionPersistence {
     LegacyController legacyController;
 
     @Override
+    public String getPersistenceName() {
+        return LegacyPersistenceConfig.NAME;
+    }
+
+    @Override
     public Execution getById(Long jobId, Long executionId) {
         return LegacyExecution.map(legacyController.getJobExecutionById(executionId));
     }
@@ -157,16 +162,6 @@ public class LegacyExecutionPersistence implements ExecutionPersistence {
     @Override
     public void log(Long jobId, Long executionId, String error, String stacktrace) {
         legacyController.appendExecutionFailure(jobId, executionId, error, stacktrace);
-    }
-
-    @Override
-    public void connect(Object... params) {
-        // TODO ?!
-    }
-
-    @Override
-    public String getPersistenceName() {
-        return LegacyPersistenceConfig.NAME;
     }
 
     @Override

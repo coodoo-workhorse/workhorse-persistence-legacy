@@ -28,6 +28,11 @@ public class LegacyJobPersistence implements JobPersistence {
     LegacyController legacyController;
 
     @Override
+    public String getPersistenceName() {
+        return LegacyPersistenceConfig.NAME;
+    }
+
+    @Override
     public Job get(Long jobId) {
         return LegacyJob.map(legacyController.getJobById(jobId));
     }
@@ -116,16 +121,6 @@ public class LegacyJobPersistence implements JobPersistence {
     @Override
     public void deleteJob(Long jobId) {
         legacyController.deleteJob(jobId);
-    }
-
-    @Override
-    public void connect(Object... params) {
-        // TODO ?!
-    }
-
-    @Override
-    public String getPersistenceName() {
-        return LegacyPersistenceConfig.NAME;
     }
 
     @Override
