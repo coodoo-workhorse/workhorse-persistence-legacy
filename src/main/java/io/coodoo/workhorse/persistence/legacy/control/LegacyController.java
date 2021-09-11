@@ -48,6 +48,9 @@ public class LegacyController {
     @JobEngineEntityManager
     EntityManager entityManager;
 
+    @Inject
+    LegacyExecutionLogBuffer legacyExecutionLogBuffer;
+
     public LegacyConfig getConfig() {
 
         LegacyConfig config = LegacyConfig.getConfig(entityManager);
@@ -306,9 +309,7 @@ public class LegacyController {
     }
 
     public void appendExecutionLog(Long jobId, Long executionId, String log) {
-        log = log + System.lineSeparator();
-        String query = "UPDATE jobengine_execution SET log = CONCAT(IFNULL(log, ''), :log) WHERE id = " + executionId;
-        entityManager.createNativeQuery(query).setParameter("log", log).executeUpdate();
+        legacyExecutionLogBuffer.appendLog(executionId, log);
     }
 
     public void appendExecutionFailure(Long jobId, Long executionId, String error, String stacktrace) {
@@ -379,11 +380,20 @@ public class LegacyController {
         return jobExecution;
     }
 
+    @SuppressWarnings("incomplete-switch")
     public LegacyExecution updateJobExecutionStatus(Long jobExecutionId, ExecutionStatus status) {
 
         LegacyExecution jobExecution = getJobExecutionById(jobExecutionId);
         jobExecution.setStatus(status);
         logger.trace("JobExecution updated: {}", jobExecution);
+
+        switch (status) {
+            case FINISHED:
+            case FAILED:
+            case ABORTED:
+                legacyExecutionLogBuffer.finalizeLog(jobExecutionId);
+        }
+
         return jobExecution;
     }
 
