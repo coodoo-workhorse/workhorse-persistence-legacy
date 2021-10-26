@@ -59,7 +59,7 @@ import io.coodoo.workhorse.util.WorkhorseUtil;
 
                 // Misc
                 @NamedQuery(name = "JobExecution.deleteOlderJobExecutions",
-                                query = "DELETE FROM LegacyExecution j WHERE j.jobId = :jobId AND j.createdAt < :preDate"),
+                                query = "DELETE FROM LegacyExecution j WHERE j.jobId = :jobId AND j.createdAt < :preDate AND (j.status = 'FINISHED' OR j.status = 'FAILED')"),
                 @NamedQuery(name = "JobExecution.selectDuration", query = "SELECT j.duration FROM LegacyExecution j WHERE j.id = :jobExecutionId"),
                 @NamedQuery(name = "JobExecution.findZombies", query = "SELECT j FROM LegacyExecution j WHERE j.startedAt < :time AND j.status = 'RUNNING'"),
 
