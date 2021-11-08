@@ -146,7 +146,6 @@ public class LegacyExecutionPersistence implements ExecutionPersistence {
         executionLog.setId(jobExecution.getId());
         executionLog.setExecutionId(jobExecution.getId());
         executionLog.setLog(jobExecution.getLog());
-        executionLog.setError(jobExecution.getFailMessage());
         executionLog.setStacktrace(jobExecution.getFailStacktrace());
         executionLog.setCreatedAt(jobExecution.getCreatedAt());
         executionLog.setUpdatedAt(jobExecution.getUpdatedAt());
@@ -160,8 +159,8 @@ public class LegacyExecutionPersistence implements ExecutionPersistence {
     }
 
     @Override
-    public void log(Long jobId, Long executionId, String error, String stacktrace) {
-        legacyController.appendExecutionFailure(jobId, executionId, error, stacktrace);
+    public void logStacktrace(Long jobId, Long executionId, String stacktrace) {
+        legacyController.appendExecutionFailure(jobId, executionId, stacktrace);
     }
 
     @Override
