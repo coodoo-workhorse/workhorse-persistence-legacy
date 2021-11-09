@@ -67,9 +67,6 @@ public class LegacyExecutionView extends AbstractIdCreatedUpdatedAtEntity {
     @Column(name = "fail_retry_execution_id")
     private Long failRetryExecutionId;
 
-    @Column(name = "fail_message")
-    private String failMessage;
-
     public Long getJobId() {
         return jobId;
     }
@@ -182,14 +179,6 @@ public class LegacyExecutionView extends AbstractIdCreatedUpdatedAtEntity {
         this.failRetryExecutionId = failRetryExecutionId;
     }
 
-    public String getFailMessage() {
-        return failMessage;
-    }
-
-    public void setFailMessage(String failMessage) {
-        this.failMessage = failMessage;
-    }
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -225,8 +214,6 @@ public class LegacyExecutionView extends AbstractIdCreatedUpdatedAtEntity {
         builder.append(failRetry);
         builder.append(", failRetryExecutionId=");
         builder.append(failRetryExecutionId);
-        builder.append(", failMessage=");
-        builder.append(failMessage);
         builder.append("]");
         return builder.toString();
     }

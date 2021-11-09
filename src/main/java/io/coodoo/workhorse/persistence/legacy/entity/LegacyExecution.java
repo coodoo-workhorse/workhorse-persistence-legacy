@@ -154,12 +154,6 @@ public class LegacyExecution extends AbstractIdCreatedUpdatedAtEntity {
     private Long failRetryExecutionId;
 
     /**
-     * The exception message, if the job execution ends in an exception.
-     */
-    @Column(name = "fail_message")
-    private String failMessage;
-
-    /**
      * The exception stacktrace, if the job execution ends in an exception.
      */
     @Column(name = "fail_stacktrace")
@@ -293,14 +287,6 @@ public class LegacyExecution extends AbstractIdCreatedUpdatedAtEntity {
         this.failRetryExecutionId = failRetryExecutionId;
     }
 
-    public String getFailMessage() {
-        return failMessage;
-    }
-
-    public void setFailMessage(String failMessage) {
-        this.failMessage = failMessage;
-    }
-
     public String getFailStacktrace() {
         return failStacktrace;
     }
@@ -314,7 +300,7 @@ public class LegacyExecution extends AbstractIdCreatedUpdatedAtEntity {
         return "JobExecution [id=" + id + ", jobId=" + jobId + ", status=" + status + ", startedAt=" + startedAt + ", endedAt=" + endedAt + ", duration="
                         + duration + ", priority=" + priority + ", maturity=" + maturity + ", batchId=" + batchId + ", chainId=" + chainId
                         + ", chainPreviousExecutionId=" + chainPreviousExecutionId + ", parameters=" + parameters + ", parametersHash=" + parametersHash
-                        + ", failRetry=" + failRetry + ", failRetryExecutionId=" + failRetryExecutionId + ", failMessage=" + failMessage + "]";
+                        + ", failRetry=" + failRetry + ", failRetryExecutionId=" + failRetryExecutionId + "]";
     }
 
     public static Execution map(LegacyExecution jobExecution) {
@@ -325,6 +311,7 @@ public class LegacyExecution extends AbstractIdCreatedUpdatedAtEntity {
         execution.setId(jobExecution.getId());
         execution.setJobId(jobExecution.getJobId());
         execution.setStatus(jobExecution.getStatus());
+        execution.setSummary(jobExecution.getSummary());
         execution.setFailStatus(ExecutionFailStatus.NONE);
         execution.setStartedAt(jobExecution.getStartedAt());
         execution.setEndedAt(jobExecution.getEndedAt());

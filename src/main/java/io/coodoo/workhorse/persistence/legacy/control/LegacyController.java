@@ -312,9 +312,9 @@ public class LegacyController {
         legacyExecutionLogBuffer.appendLog(executionId, log);
     }
 
-    public void appendExecutionFailure(Long jobId, Long executionId, String error, String stacktrace) {
-        String query = "UPDATE jobengine_execution SET fail_message = :error, fail_stacktrace = :stacktrace WHERE id = " + executionId;
-        entityManager.createNativeQuery(query).setParameter("error", error).setParameter("stacktrace", stacktrace).executeUpdate();
+    public void appendExecutionFailure(Long jobId, Long executionId, String stacktrace) {
+        String query = "UPDATE jobengine_execution SET fail_stacktrace = :stacktrace WHERE id = " + executionId;
+        entityManager.createNativeQuery(query).setParameter("stacktrace", stacktrace).executeUpdate();
     }
 
     /**
