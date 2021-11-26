@@ -200,7 +200,8 @@ public class LegacyController {
     }
 
     public LegacyJob createJob(String name, String description, List<String> tags, String workerClassName, String parametersClassName, String schedule,
-                    JobStatus status, int threads, Integer maxPerMinute, int failRetries, int retryDelay, int daysUntilCleanUp, boolean uniqueInQueue) {
+                    JobStatus status, int threads, Integer maxPerMinute, int failRetries, int retryDelay, int daysUntilCleanUp, boolean uniqueInQueue,
+                    boolean asynchronous) {
 
         LegacyJob dbJob = new LegacyJob();
         dbJob.setName(name);
@@ -216,6 +217,7 @@ public class LegacyController {
         dbJob.setRetryDelay(retryDelay);
         dbJob.setDaysUntilCleanUp(daysUntilCleanUp);
         dbJob.setUniqueInQueue(uniqueInQueue);
+        dbJob.setAsynchronous(asynchronous);
 
         entityManager.persist(dbJob);
 
@@ -223,7 +225,7 @@ public class LegacyController {
     }
 
     public LegacyJob updateJob(Long jobId, String name, String description, List<String> tags, String workerClassName, String schedule, JobStatus status,
-                    int threads, Integer maxPerMinute, int failRetries, int retryDelay, int daysUntilCleanUp, boolean uniqueInQueue) {
+                    int threads, Integer maxPerMinute, int failRetries, int retryDelay, int daysUntilCleanUp, boolean uniqueInQueue, boolean asynchronous) {
 
         LegacyJob dbJob = getJobById(jobId);
         dbJob.setName(name);
@@ -238,6 +240,7 @@ public class LegacyController {
         dbJob.setRetryDelay(retryDelay);
         dbJob.setDaysUntilCleanUp(daysUntilCleanUp);
         dbJob.setUniqueInQueue(uniqueInQueue);
+        dbJob.setAsynchronous(asynchronous);
 
         logger.trace("Job updated: {}", dbJob);
         return dbJob;

@@ -100,7 +100,7 @@ public class LegacyJobPersistence implements JobPersistence {
         int daysuntilCleanup = job.getMinutesUntilCleanUp() / 60 / 24;
         LegacyJob createJob = legacyController.createJob(job.getName(), job.getDescription(), job.getTags(), job.getWorkerClassName(),
                         job.getParametersClassName(), job.getSchedule(), job.getStatus(), job.getThreads(), job.getMaxPerMinute(), job.getFailRetries(),
-                        job.getRetryDelay(), daysuntilCleanup, job.isUniqueQueued());
+                        job.getRetryDelay(), daysuntilCleanup, job.isUniqueQueued(), job.isAsynchronous());
         return LegacyJob.map(createJob);
     }
 
@@ -114,7 +114,7 @@ public class LegacyJobPersistence implements JobPersistence {
         int daysuntilCleanup = job.getMinutesUntilCleanUp() / 60 / 24;
         LegacyJob createJob = legacyController.updateJob(job.getId(), job.getName(), job.getDescription(), job.getTags(), job.getWorkerClassName(),
                         job.getSchedule(), job.getStatus(), job.getThreads(), job.getMaxPerMinute(), job.getFailRetries(), job.getRetryDelay(),
-                        daysuntilCleanup, job.isUniqueQueued());
+                        daysuntilCleanup, job.isUniqueQueued(), job.isAsynchronous());
         return LegacyJob.map(createJob);
     }
 

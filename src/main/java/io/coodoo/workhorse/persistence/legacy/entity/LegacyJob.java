@@ -81,6 +81,9 @@ public class LegacyJob extends AbstractIdOccCreatedUpdatedAtEntity {
     @Column(name = "unique_in_queue")
     private boolean uniqueInQueue;
 
+    @Column(name = "asynchronous")
+    private boolean asynchronous;
+
     public String getName() {
         return name;
     }
@@ -185,22 +188,23 @@ public class LegacyJob extends AbstractIdOccCreatedUpdatedAtEntity {
         this.uniqueInQueue = uniqueInQueue;
     }
 
+    public boolean isAsynchronous() {
+        return asynchronous;
+    }
+
+    public void setAsynchronous(boolean asynchronous) {
+        this.asynchronous = asynchronous;
+    }
+
     @Override
     public String toString() {
-        final int maxLen = 10;
         StringBuilder builder = new StringBuilder();
-        builder.append("Job [id=");
-        builder.append(id);
-        builder.append(", createdAt=");
-        builder.append(createdAt);
-        builder.append(", updatedAt=");
-        builder.append(updatedAt);
-        builder.append(", name=");
+        builder.append("LegacyJob [name=");
         builder.append(name);
         builder.append(", description=");
         builder.append(description);
         builder.append(", tags=");
-        builder.append(tags != null ? tags.subList(0, Math.min(tags.size(), maxLen)) : null);
+        builder.append(tags);
         builder.append(", workerClassName=");
         builder.append(workerClassName);
         builder.append(", parametersClassName=");
@@ -221,6 +225,8 @@ public class LegacyJob extends AbstractIdOccCreatedUpdatedAtEntity {
         builder.append(daysUntilCleanUp);
         builder.append(", uniqueInQueue=");
         builder.append(uniqueInQueue);
+        builder.append(", asynchronous=");
+        builder.append(asynchronous);
         builder.append("]");
         return builder.toString();
     }
