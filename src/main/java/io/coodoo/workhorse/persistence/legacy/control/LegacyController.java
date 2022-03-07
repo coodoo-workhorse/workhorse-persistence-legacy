@@ -21,7 +21,7 @@ import io.coodoo.framework.listing.boundary.Term;
 import io.coodoo.workhorse.core.control.StaticConfig;
 import io.coodoo.workhorse.core.entity.ExecutionStatus;
 import io.coodoo.workhorse.core.entity.Job;
-import io.coodoo.workhorse.core.entity.JobExecutionCount;
+import io.coodoo.workhorse.core.entity.ExecutionStatusCounts;
 import io.coodoo.workhorse.core.entity.JobExecutionStatusSummary;
 import io.coodoo.workhorse.core.entity.JobStatus;
 import io.coodoo.workhorse.core.entity.JobStatusCount;
@@ -455,11 +455,11 @@ public class LegacyController {
         return executionStatusSummaries;
     }
 
-    public JobExecutionCount getJobExecutionCounts(Long jobId, LocalDateTime from, LocalDateTime to) {
+    public ExecutionStatusCounts getExecutionStatusCounts(Long jobId, LocalDateTime from, LocalDateTime to) {
 
         JobExecutionCounts jobExecutionCounts = JobExecutionCounts.query(entityManager, jobId, from, to);
 
-        return new JobExecutionCount(jobId, from, to, jobExecutionCounts.getPlanned(), jobExecutionCounts.getQueued(), jobExecutionCounts.getRunning(),
+        return new ExecutionStatusCounts(jobId, from, to, jobExecutionCounts.getPlanned(), jobExecutionCounts.getQueued(), jobExecutionCounts.getRunning(),
                         jobExecutionCounts.getFinished(), jobExecutionCounts.getFailed(), jobExecutionCounts.getAborted());
     }
 

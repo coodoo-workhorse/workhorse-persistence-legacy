@@ -12,7 +12,7 @@ import io.coodoo.workhorse.core.entity.Execution;
 import io.coodoo.workhorse.core.entity.ExecutionFailStatus;
 import io.coodoo.workhorse.core.entity.ExecutionLog;
 import io.coodoo.workhorse.core.entity.ExecutionStatus;
-import io.coodoo.workhorse.core.entity.JobExecutionCount;
+import io.coodoo.workhorse.core.entity.ExecutionStatusCounts;
 import io.coodoo.workhorse.core.entity.JobExecutionStatusSummary;
 import io.coodoo.workhorse.persistence.interfaces.ExecutionPersistence;
 import io.coodoo.workhorse.persistence.interfaces.listing.ListingResult;
@@ -174,8 +174,8 @@ public class LegacyExecutionPersistence implements ExecutionPersistence {
     }
 
     @Override
-    public JobExecutionCount getJobExecutionCount(Long jobId, LocalDateTime from, LocalDateTime to) {
-        return legacyController.getJobExecutionCounts(jobId, from, to);
+    public ExecutionStatusCounts getExecutionStatusCounts(Long jobId, LocalDateTime from, LocalDateTime to) {
+        return legacyController.getExecutionStatusCounts(jobId, from, to);
     }
 
     @Override
