@@ -233,6 +233,7 @@ public class LegacyJob extends AbstractIdOccCreatedUpdatedAtEntity {
         job.setId(legacyJob.getId());
         job.setName(legacyJob.getName());
         job.setDescription(legacyJob.getDescription());
+        job.setTags(legacyJob.getTags());
         job.setWorkerClassName(legacyJob.getWorkerClassName());
         job.setParametersClassName(legacyJob.getParametersClassName());
         job.setStatus(legacyJob.getStatus());
