@@ -20,8 +20,8 @@ import io.coodoo.framework.listing.boundary.ListingResult;
 import io.coodoo.framework.listing.boundary.Term;
 import io.coodoo.workhorse.core.control.StaticConfig;
 import io.coodoo.workhorse.core.entity.ExecutionStatus;
-import io.coodoo.workhorse.core.entity.Job;
 import io.coodoo.workhorse.core.entity.ExecutionStatusCounts;
+import io.coodoo.workhorse.core.entity.Job;
 import io.coodoo.workhorse.core.entity.JobExecutionStatusSummary;
 import io.coodoo.workhorse.core.entity.JobStatus;
 import io.coodoo.workhorse.core.entity.JobStatusCount;
@@ -222,14 +222,16 @@ public class LegacyController {
         return dbJob;
     }
 
-    public LegacyJob updateJob(Long jobId, String name, String description, List<String> tags, String workerClassName, String schedule, JobStatus status,
-                    int threads, Integer maxPerMinute, int failRetries, int retryDelay, int daysUntilCleanUp, boolean uniqueInQueue) {
+    public LegacyJob updateJob(Long jobId, String name, String description, List<String> tags, String workerClassName, String parametersClassName,
+                    String schedule, JobStatus status, int threads, Integer maxPerMinute, int failRetries, int retryDelay, int daysUntilCleanUp,
+                    boolean uniqueInQueue) {
 
         LegacyJob dbJob = getJobById(jobId);
         dbJob.setName(name);
         dbJob.setDescription(description);
         dbJob.setTags(tags);
         dbJob.setWorkerClassName(workerClassName);
+        dbJob.setParametersClassName(parametersClassName);
         dbJob.setSchedule(schedule);
         dbJob.setStatus(status);
         dbJob.setThreads(threads);
