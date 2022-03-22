@@ -1,5 +1,6 @@
 package io.coodoo.workhorse.persistence.legacy.control;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,9 @@ import io.coodoo.workhorse.util.WorkhorseUtil;
  * Provides basically CRUD and management functionality
  * 
  * @author coodoo GmbH (coodoo.io)
+ */
+/**
+ * @author coodoo GmbH (coodoo.de)
  */
 @Stateless
 public class LegacyController {
@@ -252,19 +256,28 @@ public class LegacyController {
         int deletedJobExecutions = LegacyExecution.deleteAllByJobId(entityManager, jobId);
         int deletedJobLogs = deleteAllLogsByJobId(jobId);
 
-        String deleteJobStatisticMinuteQuery = "DELETE FROM jobengine_statistic_minute WHERE job_id = " + jobId;
-        entityManager.createNativeQuery(deleteJobStatisticMinuteQuery).executeUpdate();
-
-        String deleteJobStatisticHourQuery = "DELETE FROM jobengine_statistic_hour WHERE job_id = " + jobId;
-        entityManager.createNativeQuery(deleteJobStatisticHourQuery).executeUpdate();
-
-        String deleteJobStatisticDayQuery = "DELETE FROM jobengine_statistic_day WHERE job_id = " + jobId;
-        entityManager.createNativeQuery(deleteJobStatisticDayQuery).executeUpdate();
+        deleteStatistics("jobengine_statistic_minute", jobId);
+        deleteStatistics("jobengine_statistic_hour", jobId);
+        deleteStatistics("jobengine_statistic_day", jobId);
 
         entityManager.remove(job);
 
-        String logMessage = String.format("Job removed (including %d executions and %d logs): %s", deletedJobExecutions, deletedJobLogs, job.toString());
-        logger.trace(logMessage);
+        logger.trace(String.format("Job removed (including %d executions and %d logs): %s", deletedJobExecutions, deletedJobLogs, job.toString()));
+    }
+
+    /**
+     * In case the statistics tables have not been dropped, they need to get cleared of entries of the current job.
+     */
+    private void deleteStatistics(String table, Long jobId) {
+
+        String query = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '" + table + "'";
+        BigInteger count = (BigInteger) entityManager.createNativeQuery(query).getSingleResult();
+
+        if (count.intValue() > 0) {
+            query = "DELETE FROM " + table + " WHERE job_id = " + jobId;
+            int deleted = entityManager.createNativeQuery(query).executeUpdate();
+            logger.trace("Rmoved {} entries from table {} for job with ID {}", deleted, table, jobId);
+        }
     }
 
     public LegacyExecution getJobExecutionById(Long jobExecutionId) {
